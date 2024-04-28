@@ -28,7 +28,27 @@ public class SS {
     // Hasta que quede un elemento
     while (c.size() > 1) {
       // define c1 c2
-      // Pair nearestPair = Pair(c1,c2);
+      Cluster c1 = null;
+      Cluster c2 = null;
+      double actualDist = Double.MAX_VALUE;;
+
+      for (int i=0; i<c.size(); i++) {
+        Cluster actualSingleton = c.get(i);
+        Cluster nearest = actualSingleton.nearest(c);
+
+        if (actualSingleton.getG().dist(nearest.getG()) < actualDist) {
+          actualDist = actualSingleton.getG().dist(nearest.getG());
+          // Orden debe ser |c1| >= |c2|
+          if (actualSingleton.size() >= nearest.size()) {
+            c1 = actualSingleton;
+            c2 = nearest;
+          } else {
+            c1 = nearest;
+            c2 = actualSingleton;
+          }
+        }
+      }
+
       Cluster c1c2 = c1.join(c2);
       c.remove(c1);  // Hay que probar si esta linea funciona adecuadamente :0
 

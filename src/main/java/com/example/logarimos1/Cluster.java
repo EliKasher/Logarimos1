@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.lang.Math;
 
 public class Cluster {
-
   //VARIABLES
   /** Variable privada para mantener los elementos del cluster */
   final ArrayList<Pair> elements = new ArrayList<Pair>();
@@ -14,7 +13,6 @@ public class Cluster {
 
   /** El radio cobertor del cluster */
   private double r = 0;
-
 
   //GETTERS Y SETTERS
   /** Retorna una copia de los elementos del cluster */
@@ -56,7 +54,7 @@ public class Cluster {
       //Si el punto agregado está más lejos del actual radio cobertor, se debe modificar
       double d = g.dist(actualPoint);
       if(d>r){
-        setR(d);
+        this.setR(d);
       }
     }
     elements.add(actualPoint);
@@ -67,20 +65,35 @@ public class Cluster {
    */
   public void deleteElement(Pair actualPoint){
     //PENDIENTE: actualizar radio cobertor
-    elements.remove(actualPoint);
+    elements.remove(actualPoint);  // HAY QUE TESTEAR ESTA FUNCION
   }
 
   /** Une este Cluster con otro y retorna esta unión
    * @param c el cluster con el que se quiere unir
    */
   public Cluster join(Cluster c) {
+
   }
 
   /** Busca y retorna el cluster vecino más cercano dentro de una lista
    * @param list la lista de clusters en donde buscar
    */
   public Cluster nearest(ArrayList<Cluster> list) {
+    double minDist = Double.MAX_VALUE;
+    Cluster nearest = null;
+    Pair actualG = this.getG();
 
+    //Quitamos al Cluster desde el que se llama la función de la lista
+    list.remove(this);
+
+    for (Cluster actualCluster: list) {
+      if (actualG.dist(actualCluster.getG()) < minDist) {
+        minDist = actualG.dist(actualCluster.getG());
+        nearest = actualCluster;
+      }
+    }
+
+    return nearest;
   }
 
   /** Retorna 2 clusters que vienen de la división de uno
@@ -95,7 +108,7 @@ public class Cluster {
     double finalR = Double.MAX_VALUE;
 
     //Iteramos sobre los puntos del cluster y vamos evaluando
-    ArrayList<Pair> e = getElements();
+    ArrayList<Pair> e = this.getElements();
     for(Pair pt1: e){
       ArrayList<Pair> e2 = e;
       //Eliminamos este punto para no repetir
@@ -112,10 +125,10 @@ public class Cluster {
 
         //Agregamos los demás puntos a estos clusters alternadamente,
         //para índices par lo agregamos al cluster 2, sino, al cluster 1
-        for(int i=0;i<e2.size();i++){
-          if(i%2==0){
+        for (int i=0; i<e2.size(); i++) {
+          if (i%2==0) {
             temporalC2.addElement(e2.get(i));
-          }else{
+          } else {
             temporalC2.addElement(e2.get(i));
           }
         }
@@ -124,7 +137,7 @@ public class Cluster {
         double currentR = Math.max(temporalC1.getR(), temporalC2.getR());
 
         //Evaluamos si es una mejor elección de clusters de la que teníamos
-        if(currentR<finalR){
+        if (currentR<finalR) {
           c1 = temporalC1;
           c2 = temporalC2;
 
