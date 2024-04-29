@@ -90,6 +90,8 @@ public class SS {
   /**
    *
    */
+
+  
   public InternalNode outputInterno(ExternalNode cMra) {
     //Arreglo que contiene los medoides de cada tupla en cMra
     ArrayList<Pair> cIn = new ArrayList<>();
