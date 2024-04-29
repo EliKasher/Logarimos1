@@ -90,7 +90,28 @@ public class SS {
   /**
    *
    */
-  public void outputInterno() {
-
+  public InternalNode outputInterno(ExternalNode cMra) {
+    //Arreglo que contiene los medoides de cada tupla en cMra
+    ArrayList<Pair> cIn = new ArrayList<>();
+    //Radio cobertor del nodo interno
+    double R = 0;
+    //Nodo interno c
+    ArrayList<Pair> c = new ArrayList<>();
+    //Iteramos para armar el conjunto
+    for (int i=0; i<cMra.size(); i++) {
+      Cluster cluster = cMra.get(i);
+      Pair g = cluster.g;
+      cIn.add(g);
+      c.add(cluster);
+    }
+    //Medoide primario de cIn, hay que ver cómo resolverlo
+    Pair G = cIn.gPrimario;
+    //Creamos el InternalNode (G,R,A)
+    InternalNode output = new InternalNode();
+    output.g = G;
+    output.r = R;
+    //Como A es una dirección al conjunto de elementos, lo seteamos así
+    output.A = c;
+    return output;
   }
 }
