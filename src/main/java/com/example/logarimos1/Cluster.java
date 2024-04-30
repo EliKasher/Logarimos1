@@ -48,12 +48,12 @@ public class Cluster {
    */
   public void addElement(Pair actualPoint) {
     //Si el punto agregado es el primer punto, corresponde al medoide
-    if(elements.isEmpty()){
+    if(elements.isEmpty()) {
       setG(actualPoint);
     } else {
       //Si el punto agregado está más lejos del actual radio cobertor, se debe modificar
       double d = g.dist(actualPoint);
-      if(d>r){
+      if(d>r) {
         this.setR(d);
       }
     }
@@ -63,7 +63,7 @@ public class Cluster {
   /** Eliminar un par ordenado del cluster.
    * @param actualPoint el valor del par ordenado
    */
-  public void deleteElement(Pair actualPoint){
+  public void deleteElement(Pair actualPoint) {
     //PENDIENTE: actualizar radio cobertor
     elements.remove(actualPoint);  // HAY QUE TESTEAR ESTA FUNCION
   }
@@ -72,7 +72,24 @@ public class Cluster {
    * @param c el cluster con el que se quiere unir
    */
   public Cluster join(Cluster c) {
+    //Definimos las listas con los elementos de ambos cluster
+    ArrayList<Pair> c1 = this.getElements();
+    ArrayList<Pair> c2 = c.getElements();
+    //Creamos el cluster que se va a retornar
+    Cluster c3 = new Cluster();
 
+    //Agregamos todos los elementos de ambos clusters
+    for(int i=0; i<c1.size(); i++){
+      c3.addElement(c1.get(i));
+    }
+    for(int i=0; i<c2.size(); i++){
+      c3.addElement(c2.get(i));
+    }
+
+    //Actualizamos el medoide
+    c3.medoide();
+
+    return c3;
   }
 
   /** Busca y retorna el cluster vecino más cercano dentro de una lista
@@ -98,7 +115,7 @@ public class Cluster {
 
   /** Retorna 2 clusters que vienen de la división de uno
    */
-  public ArrayList<Cluster> minMaxSplit(){
+  public ArrayList<Cluster> minMaxSplit() {
     //Variables para ir guardando los clusters elegidos
     Cluster c1 = new Cluster();
     Cluster c2 = new Cluster();
@@ -109,11 +126,11 @@ public class Cluster {
 
     //Iteramos sobre los puntos del cluster y vamos evaluando
     ArrayList<Pair> e = this.getElements();
-    for(Pair pt1: e){
+    for(Pair pt1: e) {
       ArrayList<Pair> e2 = e;
       //Eliminamos este punto para no repetir
       e2.remove(pt1);
-      for(Pair pt2: e2){
+      for(Pair pt2: e2) {
         //Eliminamos este punto para no repetir
         e2.remove(pt2);
 
@@ -152,6 +169,46 @@ public class Cluster {
     a.add(c2);
 
     return a;
+  }
+
+  /**
+   * El medoide de un cluster es un punto g en el cluster tq
+   * No existe otro punto p en el cluster que, al ser nominado
+   * como medoide, genere un r < al entregado por g.
+   * Se definen el medoide del cluster junto a su radio cobertor.
+   */
+  public void medoide() {
+    // Sólo hay 1 candidato a medoide
+    if(elements.size()==1) {
+      g = elements.get(0);
+    } else {
+      //Guardamos las distancias máximas de cada punto al considerarlo medoide
+      double radio = Double.MAX_VALUE;
+      //Guardamos el mejor candidato a medoide
+      Pair m = new Pair(0,0);
+
+      //Iteramos sobre todo par de elementos en el medioide
+      for (Pair p: elements){
+
+        //Guardamos, para el punto p, la distancia máxima a cualquier otro punto
+        double maxDist = 0;
+
+        //Vamos a iterar nuevamente, considerando al punto p como 'centro' y calculando el radio según p
+        for (Pair p2: elements){
+          if(p.dist(p2)>maxDist){
+            maxDist = p.dist(p2);
+          }
+        }
+
+        //Si la distancia máxima es menor que el radio que se tenía anteriormente
+        if(maxDist<radio){
+          radio = maxDist;
+          m = p;
+        }
+      }
+      r = radio;
+      g = m;
+    }
   }
 
   /**
