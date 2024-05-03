@@ -86,35 +86,33 @@ public class SS {
   }
 
   /**
-   * Conforma un nodo hoja en base a un conjunto de clusters
+   * Conforma un nodo hoja en base a los puntos de un cluster
    *
    * @return Retorna el nodo hoja conformado
    */
-  public ArrayList<NodeSS> outputHoja(ArrayList<Cluster> cIn) {
-    ArrayList<NodeSS> result = new ArrayList<>();
+  public TupleSS outputHoja(Cluster cIn) {
+    TupleSS result = new TupleSS();
+    NodeSS c = new NodeSS();
+    double r = 0;
+    Pair primaryG = cIn.getG();
 
-    for (Cluster cluster : cIn) {
-      double r = 0;
-      ArrayList<NodeSS> c = null;
 
-      for (Pair point : cluster.getElements()) {
-        NodeSS extNode = new NodeSS();
-        extNode.setG(point);
-        extNode.setA(null);
-        extNode.setR(0);
-        c.add(extNode);
+    for (Pair point : cIn.getElements()) {
+      TupleSS extNode = new TupleSS();
+      extNode.setG(point);
+      extNode.setA(null);
+      extNode.setR(0);
 
-        r = Math.max(r, cluster.getG().dist(extNode.getG()));
-      }
+      c.addEntry(extNode);
 
-      NodeSS nodeI = new NodeSS();
-      nodeI.setG(cluster.getG());
-      nodeI.setR(r);
-      nodeI.setA(c);
-
-      result.add(nodeI);
+      r = Math.max(r, primaryG.dist(extNode.getG()));
     }
 
+    result.setR(r);
+    result.setG(primaryG);
+    result.setA(c);
+
+    // result = TupleSS(g,r,a = NodeSS(c = TupleSS(g,r,a = null)))
     return result;
   }
 
@@ -122,7 +120,7 @@ public class SS {
    * En base a una lista de nodos externos, conforma un conjunto de nodos internos
    * @return Un conjunto de nodos internos
    */
-  public NodeSS outputInterno(ArrayList<NodeSS> cMra) {
+  public ArrayList<TupleSS> outputInterno(ArrayList<NodeSS> cMra) {
     //Se define un cluster para generar un medoide G a partir de cMra
     Cluster cIn = new Cluster();
     //Agregamos cada elemento para ir armando el cluster
@@ -157,14 +155,19 @@ public class SS {
    * Aplica el algoritmo SS sobre un conjunto de puntos.
    * @returns un M-Tree construido
    */
-  public NodeSS ss(ArrayList<Pair> cIn) {
+  public ArrayList<TupleSS> ss(ArrayList<Pair> cIn) {
     ArrayList<Cluster> cOut = cluster(cIn);
 
     // Caso Base con cIn <= B -> Simplemente se forma un Nodo Hoja para todo (Aún así debe pasar por la función Cluster).
     if (cIn.size() <=B) {
-      NodeSS result = outputHoja(cOut);
-      return result;
+      NodeSS extNode = new NodeSS();
 
+      for (Cluster cluster : cOut) {
+        TupleSS entry = outputHoja(cluster);
+        extNode.addEntry(entry);
+      }
+
+      return extNode.getEntries();
     } else {
       //Conjunto para hacer el return
       ArrayList<NodeSS> newC = new ArrayList<NodeSS>();
