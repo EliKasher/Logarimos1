@@ -158,7 +158,7 @@ public class SS {
    * Aplica el algoritmo SS sobre un conjunto de puntos.
    * @returns un M-Tree construido
    */
-  public ArrayList<TupleSS> ss(ArrayList<Pair> cIn) {
+  public NodeSS ss(ArrayList<Pair> cIn) {
     ArrayList<Cluster> cOut = cluster(cIn);
 
     // Caso Base con cIn <= B -> Simplemente se forma un Nodo Hoja para todo (Aún así debe pasar por la función Cluster).
@@ -170,10 +170,10 @@ public class SS {
         extNode.addEntry(entry);
       }
 
-      return extNode.getEntries();
+      return extNode;
     } else {
       //Conjunto para hacer el return
-      ArrayList<NodeSS> newC = new ArrayList<NodeSS>();
+      ArrayList<TupleSS> newC = new ArrayList<TupleSS>();
 
       ArrayList<TupleSS> c = new ArrayList<TupleSS>();
 
@@ -220,11 +220,12 @@ public class SS {
         //Luego iteramos sobre cMra y vamos llenando el array newC
         for (ArrayList<TupleSS> entryList: cMra) {
             TupleSS intEntry = outputInterno(entryList);
-            newC.add();
+            newC.add(intEntry);
         }
       }
-      NodeSS result = outputInterno(newC);
-      return result;
+
+      TupleSS result = outputInterno(newC);
+      return result.getA();
     }
   }
 }
