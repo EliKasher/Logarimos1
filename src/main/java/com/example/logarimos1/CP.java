@@ -139,18 +139,44 @@ public class CP {
         NodeCP a = cp(samples.get(i));
 
         if (a.size() < b) {
-          Pair pfj = f.remove(i);
+          Pair pfj = f.remove(i);  // HAY QUE VER QUE SE HACE CON ESTO
 
           ArrayList<NodeCP> childs = a.getChilds();
-          for(int j=0; j<childs.size(); j++){
-            NodeCP child = childs.get(j);
+          for(int j=0; j<childs.size(); j++) {
+            NodeCP child = childs.get(j); // subarboles
             f.add(child.getSample());
-            trees.add(child);
+            trees.add(child); // se añaden los subarboles como arboles a T (trees)
           }
+        } else {
+          trees.add(a);
         }
-
-        trees.add(a);
       }
+      // Balanceamiento
+
+      //Buscamos la altura mínima entre los subárboles
+      int h = Integer.MAX_VALUE;
+      for(int i = 0; i < trees.size(); i++) {
+        int tempH = trees.get(i).getH();
+        if(tempH < h){
+          h = tempH;
+        }
+      }
+
+      //Se define el conjunto T vacío
+      ArrayList<NodeCP> t = new ArrayList<>();
+
+      for(int i=0; i<trees.size(); i++) {
+        NodeCP ti = trees.get(i);
+        if(ti.getH() == h) {
+          t.add(ti);
+        } else {
+          Pair p = ti.getSample(); // HAY QUE VER QUE SE HACE CON ESTO
+          int index = f.indexOf(p);
+          f.remove(index);
+        }
+      }
+
+
 
 
 

@@ -6,7 +6,7 @@ public class NodeCP {
   /** Radio Cobertor */
   private double r = 0;
   /** Altura del árbol */
-  private double h = 0;
+  private int h = Integer.MAX_VALUE;
   private Pair sample = null;
 
   public NodeCP() {
@@ -22,7 +22,7 @@ public class NodeCP {
   /**
    * @return altura del árbol
    */
-  public double getH() {
+  public int getH() {
     return h;
   }
 
@@ -45,7 +45,7 @@ public class NodeCP {
    * Cambia la altura a newH
    * @param newH la nueva altura del arbol
    */
-  public void setH(double newH) {
+  public void setH(int newH) {
     h = newH;
   }
 

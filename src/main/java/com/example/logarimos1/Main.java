@@ -4,14 +4,15 @@ import java.util.ArrayList;
 
 public class Main {
   //Tamaño de B
-  static final double tamanoB = 1;
+  static final Sizeof so = new Sizeof();
+  static final int tamanoB = 4096 / so.sizeof(double.class);
 
   // Se arman inputs 2^10 -> 2^25 para construir M-Tree
   static final ArrayList<ArrayList<Pair>> inputs = new ArrayList<>();
 
   //Se arman listas para almacenar los árboles
-  static final ArrayList<ArrayList<Node>> arbolesSS = new ArrayList<>();
-  static final ArrayList<ArrayList<Node>> arbolesCP = new ArrayList<>();
+  static final ArrayList<ArrayList<NodeSS>> arbolesSS = new ArrayList<>();
+  static final ArrayList<NodeCP> arbolesCP = new ArrayList<>();
 
   //Se crean objetos para llamar a los constructores de los árboles
   static final SS ss = new SS(tamanoB);
@@ -40,10 +41,10 @@ public class Main {
 
     //Creamos los árboles con SS y CP para cada input y los agregamos a las listas correspondientes
     for(int i=0; i<inputs.size(); i++) {
-      ArrayList<Node> a1 = ss.ss(inputs.get(i));
+      ArrayList<NodeSS> a1 = ss.ss(inputs.get(i));
       arbolesSS.add(a1);
 
-      ArrayList<Node> a2 = cp.cp(inputs.get(i));
+      NodeCP a2 = cp.cp(inputs.get(i));
       arbolesCP.add(a2);
     }
     isInputReady = true;
@@ -54,7 +55,7 @@ public class Main {
       startingProcess();
     }
 
-    // Realizar búsquedas
+    // Realizar 100 búsquedas por algoritmo
 
   }
 }

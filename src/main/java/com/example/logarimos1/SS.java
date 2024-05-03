@@ -41,7 +41,7 @@ public class SS {
       // define c1 c2
       Cluster c1 = null;
       Cluster c2 = null;
-      double actualDist = Double.MAX_VALUE;;
+      double actualDist = Double.MAX_VALUE;
 
       for (int i=0; i<c.size(); i++) {
         Cluster actualSingleton = c.get(i);
@@ -95,17 +95,17 @@ public class SS {
    * Conforma un nodo hoja en base a un conjunto de clusters
    * @return Retorna el nodo hoja conformado
    */
-  public Node outputHoja(ArrayList<Cluster> cIn) {
+  public NodeSS outputHoja(ArrayList<Cluster> cIn) {
     double r = 0;
     Pair g = null;
-    ArrayList<Node> c = null;
+    ArrayList<NodeSS> c = null;
 
     for (Cluster cluster : cIn) {
       if (g == null) {
         g = cluster.getG();
       }
 
-      Node extNode = new Node();
+      NodeSS extNode = new NodeSS();
       extNode.setG(cluster.getG());
       extNode.setA(null);
       extNode.setR(0);
@@ -114,7 +114,7 @@ public class SS {
       r = Math.max(r, g.dist(cluster.getG()));
     }
 
-    Node result = new Node();
+    NodeSS result = new NodeSS();
     result.setG(g);
     result.setR(r);
     result.setA(c);
@@ -125,11 +125,11 @@ public class SS {
    * En base a una lista de nodos externos, conforma un conjunto de nodos internos
    * @return Un conjunto de nodos internos
    */
-  public Node outputInterno(ArrayList<Node> cMra) {
+  public NodeSS outputInterno(ArrayList<NodeSS> cMra) {
     //Se define un cluster para generar un medoide G a partir de cMra
     Cluster cIn = new Cluster();
     //Agregamos cada elemento para ir armando el cluster
-    for (Node node : cMra) {
+    for (NodeSS node : cMra) {
       Pair g = node.getG();
       cIn.addElement(g);
     }
@@ -138,9 +138,9 @@ public class SS {
     //Definimos R
     double R = 0;
     //Definimos el conjunto C
-    ArrayList<Node> c = new ArrayList<Node>();
+    ArrayList<NodeSS> c = new ArrayList<NodeSS>();
     //Agregamos todos los (g,r,a) en cMra
-    for (Node node : cMra) {
+    for (NodeSS node : cMra) {
       c.add(node);
       //Definimos g y r para setear R
       Pair g = node.getG();
@@ -149,7 +149,7 @@ public class SS {
       R = Math.max(R, g.dist(G) + r);
     }
 
-    Node result = new Node();
+    NodeSS result = new NodeSS();
     result.setG(G);
     result.setR(R);
     result.setA(c);
@@ -160,19 +160,19 @@ public class SS {
    * Aplica el algoritmo SS sobre un conjunto de puntos.
    * @returns un M-Tree construido
    */
-  public ArrayList<Node> ss(ArrayList<Pair> cIn) {
+  public ArrayList<NodeSS> ss(ArrayList<Pair> cIn) {
     ArrayList<Cluster> cOut = cluster(cIn);
 
     // Caso Base con cIn <= B -> Simplemente se forma un Nodo Hoja para todo (Aún así debe pasar por la función Cluster).
     if (cIn.size() <=B) {
-      Node result = outputHoja(cOut);
+      NodeSS result = outputHoja(cOut);
       return result.getA();
 
     } else {
       //Conjunto para hacer el return
-      ArrayList<Node> newC = new ArrayList<Node>();
+      ArrayList<NodeSS> newC = new ArrayList<NodeSS>();
 
-      ArrayList<Node> c = new ArrayList<Node>();
+      ArrayList<NodeSS> c = new ArrayList<NodeSS>();
 
       //Se agregan los elementos de cOut (clusters) pasados por OutputHoja al conjunto C
       for (Cluster cluster : cOut) {
@@ -185,14 +185,14 @@ public class SS {
         //Armamos el conjunto cIn2, que contiene los medoides (puntos) de los clusters de c
         ArrayList<Pair> cIn2 = new ArrayList<>();
 
-        for (Node nodo: c) {
+        for (NodeSS nodo: c) {
           cIn2.add(nodo.getG());
         }
         //Luego creamos el conjunto de clusters cOut2, en base al cIn2
         ArrayList<Cluster> cOut2 = cluster(cIn2);
 
         //Conjunto de listas de nodos Cmra
-        ArrayList<ArrayList<Node>> cMra = new ArrayList<ArrayList<Node>>();
+        ArrayList<ArrayList<NodeSS>> cMra = new ArrayList<ArrayList<NodeSS>>();
 
         //Por cada cluster e en cOut2
         for (Cluster cluster : cOut2) {
@@ -202,10 +202,10 @@ public class SS {
           ArrayList<Pair> eElements = e.getElements();
 
           //Definimos el conjunto s como un nodo de c tal que su medoide pertenece al cluster e
-          ArrayList<Node> s = new ArrayList<Node>();
+          ArrayList<NodeSS> s = new ArrayList<NodeSS>();
 
           //Iteramos sobre los elementos de c para encontrar los nodos que satisfagan la condición de s
-          for (Node nodo : c) {
+          for (NodeSS nodo : c) {
             if (eElements.contains(nodo.getG())) {
               s.add(nodo);
             }
@@ -215,11 +215,11 @@ public class SS {
         }
 
         //Luego iteramos sobre cMra y vamos llenando el array newC
-        for (ArrayList<Node> nodeList: cMra) {
+        for (ArrayList<NodeSS> nodeList: cMra) {
           newC.add(outputInterno(nodeList));
         }
       }
-      Node result = outputInterno(newC);
+      NodeSS result = outputInterno(newC);
       return result.getA();
     }
   }
