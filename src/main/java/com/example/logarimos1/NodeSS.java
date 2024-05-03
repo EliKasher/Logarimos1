@@ -6,7 +6,7 @@ public class NodeSS {
   private ArrayList<TupleSS> entries;
 
   public NodeSS() {
-    entries = new ArrayList<>();
+    entries = new ArrayList<TupleSS>();
   }
 
   /**
@@ -34,13 +34,25 @@ public class NodeSS {
 
   /**
    * Busca los pares dentro de un radio de búsqueda r para un punto q, en un M-Tree.
-   * @return null si no se encuentra, el array de pares coincidentes si los encuentra.
+   * @param mTree un NodeSS arbol.
+   * @param q El punto sobre el que se busca
+   * @param r Radio de búsqueda
+   * @return La lista de resultados Result con los pares encontrados y sus accesos a memoria.
    */
   public Result search(NodeSS mTree, Pair q,  double r) {
-    // Comparar ingresos a disco
-    // Buscar el nodo correspondiente
-    // Cada vez que se ingresa a un nodo se suma 1
+    return auxSearch(mTree,q,r,null);
+  }
 
+  /**
+   * Es un search con memoria.
+   * Busca los pares dentro de un radio de búsqueda r para un punto q, en un M-Tree.
+   * @param mTree
+   * @param q
+   * @param r
+   * @param nodeG
+   * @return null si no se encuentra, el array de pares coincidentes si los encuentra.
+   */
+  public Result auxSearch(NodeSS mTree, Pair q, double r, Pair nodeG) {
     // Creamos la estructura para almacenar el resultado
     Result res = new Result();
 
@@ -48,42 +60,41 @@ public class NodeSS {
     if (mTree == null) {
       return null;
     }
-
+    // Caso donde NodeSS(c = ArrayList<TupleSS> (g,r = 0,a = null))
+    ArrayList<TupleSS> treeEntries = mTree.getEntries();
     // Si el nodo es una hoja (nodo externo)
-    if (mTree.getA() == null) {
-      Pair p = mTree.getG();
+    if (treeEntries == null) {
+      Pair p = nodeG;
       double d = q.dist(p);
 
       if (d <= r) {
         res.addPoint(p);
       }
-
-      return res;
     } else {
-      //Si el nodo es interno, significa que vamos a acceder a disco para obtener su infromación
-      //por lo que aumentamos el contador del resultado
+      // Si el nodo es interno, significa que vamos a acceder a disco para obtener su infromación
+      // por lo que aumentamos el contador del resultado
+      // Caso donde NodeSS(c = ArrayList<TupleSS> (g,r,a = NodeSS(c)))
       res.memoryAccess(1);
 
-      for(NodeSS child : mTree.getA()) {
-        double d = q.dist(child.getG());
+      for(TupleSS entry : mTree.getEntries()) {
+        double d = q.dist(entry.getG());
 
         //Si la distancia es menor al radio de búsqueda, se ingresa para buscar recursivamente
-        if (d <= r + child.getR()) {
-          for (NodeSS childsChild : mTree.getA()) {
-            Result resultChild = search(childsChild,q,r);
+        if (d <= r + entry.getR()) {
+          Pair newNodeG = entry.getG();
 
-            //Se accede a los puntos encontrados por el hijo y se agregan al resultado general
-            for (Pair point : resultChild.getPoints()) {
-              res.addPoint(point);
-            }
+          Result resultChild = auxSearch(entry.getA(), q, r, newNodeG);
 
-            //Se accede a la cantidad de accesos de memoria del hijo y se suman al resultado final
-            res.memoryAccess(resultChild.getAccessCount());
+          //Se accede a los puntos encontrados por el hijo y se agregan al resultado general
+          for (Pair point : resultChild.getPoints()) {
+            res.addPoint(point);
           }
+
+          //Se accede a la cantidad de accesos de memoria del hijo y se suman al resultado final
+          res.memoryAccess(resultChild.getAccessCount());
         }
       }
-
-      return res;
     }
+    return res;
   }
 }

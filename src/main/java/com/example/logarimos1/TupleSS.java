@@ -15,7 +15,7 @@ public class TupleSS {
 
     //GETTERS Y SETTERS
     /**
-     * Retorna una copia de los elementos del nodo
+     * Retorna los elementos del nodo
      */
     public NodeSS getA() { return c;}
 
