@@ -79,11 +79,11 @@ public class Cluster {
     Cluster c3 = new Cluster();
 
     //Agregamos todos los elementos de ambos clusters
-    for(int i=0; i<c1.size(); i++){
-      c3.addElement(c1.get(i));
+    for(Pair pair : c1) {
+      c3.addElement(pair);
     }
-    for(int i=0; i<c2.size(); i++){
-      c3.addElement(c2.get(i));
+    for(Pair pair : c2) {
+      c3.addElement(pair);
     }
 
     //Actualizamos el medoide
@@ -126,11 +126,11 @@ public class Cluster {
 
     //Iteramos sobre los puntos del cluster y vamos evaluando
     ArrayList<Pair> e = this.getElements();
-    for(Pair pt1: e) {
+    for (Pair pt1: e) {
       ArrayList<Pair> e2 = e;
       //Eliminamos este punto para no repetir
       e2.remove(pt1);
-      for(Pair pt2: e2) {
+      for (Pair pt2: e2) {
         //Eliminamos este punto para no repetir
         e2.remove(pt2);
 
@@ -179,7 +179,7 @@ public class Cluster {
    */
   public void medoide() {
     // Sólo hay 1 candidato a medoide
-    if(elements.size()==1) {
+    if(elements.size() == 1) {
       g = elements.get(0);
     } else {
       //Guardamos las distancias máximas de cada punto al considerarlo medoide
@@ -221,6 +221,6 @@ public class Cluster {
    * @return
    */
   public double size() {
-    return 1;
+    return elements.toArray().length;
   }
 }

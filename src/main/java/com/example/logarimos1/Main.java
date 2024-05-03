@@ -11,7 +11,7 @@ public class Main {
   static final ArrayList<ArrayList<Pair>> inputs = new ArrayList<>();
 
   //Se arman listas para almacenar los árboles
-  static final ArrayList<ArrayList<NodeSS>> arbolesSS = new ArrayList<>();
+  static final ArrayList<NodeSS> arbolesSS = new ArrayList<>();
   static final ArrayList<NodeCP> arbolesCP = new ArrayList<>();
 
   //Se crean objetos para llamar a los constructores de los árboles
@@ -41,7 +41,7 @@ public class Main {
 
     //Creamos los árboles con SS y CP para cada input y los agregamos a las listas correspondientes
     for(int i=0; i<inputs.size(); i++) {
-      ArrayList<NodeSS> a1 = ss.ss(inputs.get(i));
+      NodeSS a1 = ss.ss(inputs.get(i));
       arbolesSS.add(a1);
 
       NodeCP a2 = cp.cp(inputs.get(i));

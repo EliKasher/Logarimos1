@@ -1,17 +1,11 @@
 package com.example.logarimos1;
 
-import org.apache.commons.lang3.ObjectUtils;
-
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.List;
 
 /**
  * Clase que conforma el método Sexton-Swinbank
  */
 public class SS {
-  //Hay que definir bien estos valores
   double B = 2;
   double b = 0.5*B;
 
@@ -43,19 +37,18 @@ public class SS {
       Cluster c2 = null;
       double actualDist = Double.MAX_VALUE;
 
-      for (int i=0; i<c.size(); i++) {
-        Cluster actualSingleton = c.get(i);
-        Cluster nearest = actualSingleton.nearest(c);
+      for (Cluster cluster : c) {
+        Cluster nearest = cluster.nearest(c);
 
-        if (actualSingleton.getG().dist(nearest.getG()) < actualDist) {
-          actualDist = actualSingleton.getG().dist(nearest.getG());
-          // Orden debe ser |c1| >= |c2|
-          if (actualSingleton.size() >= nearest.size()) {
-            c1 = actualSingleton;
+        if (cluster.getG().dist(nearest.getG()) < actualDist) {
+          actualDist = cluster.getG().dist(nearest.getG());
+
+          if (cluster.size() >= nearest.size()) {
+            c1 = cluster;
             c2 = nearest;
           } else {
             c1 = nearest;
-            c2 = actualSingleton;
+            c2 = cluster;
           }
         }
       }
@@ -70,7 +63,7 @@ public class SS {
         cOut.add(c1);
       }
     }
-
+    // Si salimos del while, se sabe que sólo queda 1 elemento
     Cluster lastElement = c.get(0);
     Cluster cPrima = new Cluster();
 
@@ -80,6 +73,7 @@ public class SS {
     }
 
     Cluster cLcP = lastElement.join(cPrima);
+
     if(cLcP.size() <= B) {
       cOut.add(cLcP);
     } else {
@@ -93,31 +87,34 @@ public class SS {
 
   /**
    * Conforma un nodo hoja en base a un conjunto de clusters
+   *
    * @return Retorna el nodo hoja conformado
    */
-  public NodeSS outputHoja(ArrayList<Cluster> cIn) {
-    double r = 0;
-    Pair g = null;
-    ArrayList<NodeSS> c = null;
+  public ArrayList<NodeSS> outputHoja(ArrayList<Cluster> cIn) {
+    ArrayList<NodeSS> result = new ArrayList<>();
 
     for (Cluster cluster : cIn) {
-      if (g == null) {
-        g = cluster.getG();
+      double r = 0;
+      ArrayList<NodeSS> c = null;
+
+      for (Pair point : cluster.getElements()) {
+        NodeSS extNode = new NodeSS();
+        extNode.setG(point);
+        extNode.setA(null);
+        extNode.setR(0);
+        c.add(extNode);
+
+        r = Math.max(r, cluster.getG().dist(extNode.getG()));
       }
 
-      NodeSS extNode = new NodeSS();
-      extNode.setG(cluster.getG());
-      extNode.setA(null);
-      extNode.setR(0);
-      c.add(extNode);
+      NodeSS nodeI = new NodeSS();
+      nodeI.setG(cluster.getG());
+      nodeI.setR(r);
+      nodeI.setA(c);
 
-      r = Math.max(r, g.dist(cluster.getG()));
+      result.add(nodeI);
     }
 
-    NodeSS result = new NodeSS();
-    result.setG(g);
-    result.setR(r);
-    result.setA(c);
     return result;
   }
 
@@ -160,13 +157,13 @@ public class SS {
    * Aplica el algoritmo SS sobre un conjunto de puntos.
    * @returns un M-Tree construido
    */
-  public ArrayList<NodeSS> ss(ArrayList<Pair> cIn) {
+  public NodeSS ss(ArrayList<Pair> cIn) {
     ArrayList<Cluster> cOut = cluster(cIn);
 
     // Caso Base con cIn <= B -> Simplemente se forma un Nodo Hoja para todo (Aún así debe pasar por la función Cluster).
     if (cIn.size() <=B) {
       NodeSS result = outputHoja(cOut);
-      return result.getA();
+      return result;
 
     } else {
       //Conjunto para hacer el return
@@ -220,7 +217,7 @@ public class SS {
         }
       }
       NodeSS result = outputInterno(newC);
-      return result.getA();
+      return result;
     }
   }
 }
