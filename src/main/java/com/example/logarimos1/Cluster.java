@@ -154,7 +154,7 @@ public class Cluster {
         double currentR = Math.max(temporalC1.getR(), temporalC2.getR());
 
         //Evaluamos si es una mejor elección de clusters de la que teníamos
-        if (currentR<finalR) {
+        if (currentR < finalR) {
           c1 = temporalC1;
           c2 = temporalC2;
 
@@ -188,20 +188,20 @@ public class Cluster {
       Pair m = new Pair(0,0);
 
       //Iteramos sobre todo par de elementos en el medioide
-      for (Pair p: elements){
+      for (Pair p: elements) {
 
         //Guardamos, para el punto p, la distancia máxima a cualquier otro punto
         double maxDist = 0;
 
         //Vamos a iterar nuevamente, considerando al punto p como 'centro' y calculando el radio según p
-        for (Pair p2: elements){
-          if(p.dist(p2)>maxDist){
+        for (Pair p2: elements) {
+          if(p.dist(p2) > maxDist) {
             maxDist = p.dist(p2);
           }
         }
 
         //Si la distancia máxima es menor que el radio que se tenía anteriormente
-        if(maxDist<radio){
+        if(maxDist < radio) {
           radio = maxDist;
           m = p;
         }
@@ -209,18 +209,5 @@ public class Cluster {
       r = radio;
       g = m;
     }
-  }
-
-  /**
-   * Tamaño del nodo
-   * Node Size -> max(B · sizeof(entry))
-   * min Capacity -> b = 0.5 · B
-   * max Capacity -> B
-   *
-   * 1 bloque -> 4096 Bytes (1)
-   * @return
-   */
-  public double size() {
-    return elements.toArray().length;
   }
 }
