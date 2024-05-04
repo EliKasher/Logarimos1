@@ -43,7 +43,7 @@ public class SS {
         if (cluster.getG().dist(nearest.getG()) < actualDist) {
           actualDist = cluster.getG().dist(nearest.getG());
 
-          if (cluster.size() >= nearest.size()) {
+          if (cluster.getElements().size() >= nearest.getElements().size()) {
             c1 = cluster;
             c2 = nearest;
           } else {
@@ -56,7 +56,7 @@ public class SS {
       Cluster c1c2 = c1.join(c2);
       c.remove(c1);  // Hay que probar si esta linea funciona adecuadamente :0
 
-      if(c1c2.size() <= B) {
+      if(c1c2.getElements().size() <= B) {
         c.remove(c2);
         c.add(c1c2);
       } else {
@@ -74,7 +74,7 @@ public class SS {
 
     Cluster cLcP = lastElement.join(cPrima);
 
-    if(cLcP.size() <= B) {
+    if(cLcP.getElements().size() <= B) {
       cOut.add(cLcP);
     } else {
       ArrayList<Cluster> minMaxClusters = cLcP.minMaxSplit();
