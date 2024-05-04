@@ -32,11 +32,11 @@ public class Sizeof {
       return Double.SIZE;
     }
     if (dataType == ArrayList.class || dataType == ArrayList.class) {
-      return 4;
+      return 4; //Dejamos como default el tamaño de un puntero
     }
     if (dataType == Pair.class || dataType == Pair.class) {
       return 2*Double.SIZE;
     }
-    return 4; // default for 32-bit memory pointer
+    return 4;
   }
 }

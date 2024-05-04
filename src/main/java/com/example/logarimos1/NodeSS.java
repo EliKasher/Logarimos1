@@ -2,9 +2,15 @@ package com.example.logarimos1;
 
 import java.util.ArrayList;
 
+/**
+ * Clase que representa un nodo creado por el algoritmo SS
+ */
 public class NodeSS {
   private ArrayList<TupleSS> entries;
 
+  /**
+   * Las entradas asociadas, que se guardan dentro de otro nodo.
+   */
   public NodeSS() {
     entries = new ArrayList<TupleSS>();
   }

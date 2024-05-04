@@ -3,6 +3,10 @@ package com.example.logarimos1;
 import java.util.ArrayList;
 import java.lang.Math;
 
+/**
+ * Clase que representa un cluster. Posee un medoide, una lista de puntos asociados
+ * (los elementos) y el radio cobertor.
+ */
 public class Cluster {
   //VARIABLES
   /** Variable privada para mantener los elementos del cluster */
