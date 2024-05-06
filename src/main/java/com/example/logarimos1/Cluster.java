@@ -54,12 +54,11 @@ public class Cluster {
     //Si el punto agregado es el primer punto, corresponde al medoide
     if(elements.isEmpty()) {
       setG(actualPoint);
-    } else {
-      //Si el punto agregado está más lejos del actual radio cobertor, se debe modificar
-      double d = g.dist(actualPoint);
-      if(d>r) {
-        this.setR(d);
-      }
+    }
+    //Si el punto agregado está más lejos del actual radio cobertor, se debe modificar
+    double d = g.dist(actualPoint);
+    if(d>r) {
+      this.setR(d);
     }
     elements.add(actualPoint);
   }

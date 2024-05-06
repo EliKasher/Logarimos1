@@ -1,44 +1,30 @@
 package com.example.logarimos1;
 
+import javafx.scene.Node;
+
 import java.util.ArrayList;
 
+/**
+ * Clase que representa un nodo creado por el algoritmo CP.
+ */
 public class NodeCP {
-  /** Radio Cobertor */
-  private double r = 0;
   /** Altura del árbol */
   private int h = Integer.MAX_VALUE;
-  private Pair sample = null;
-
-  public NodeCP() {
-  }
+  /** Lista de nodos hijos */
+  private ArrayList<TupleCP> entries = new ArrayList<TupleCP>();
 
   /**
-   * @return radio cobertor
-   */
-  public double getR() {
-    return r;
-  }
-
-  /**
-   * @return altura del árbol
+   * @return altura del nodo
    */
   public int getH() {
     return h;
   }
 
   /**
-   * @return El sample del Nodo asociado.
+   * @return Las entradas hijas del nodo.
    */
-  public Pair getSample() {
-    return sample;
-  }
-
-  /**
-   * Cambia el radio a newR
-   * @param newR nuevo radio cobertor
-   */
-  public void setR(double newR) {
-    r = newR;
+  public ArrayList<TupleCP> getEntries() {
+    return this.entries;
   }
 
   /**
@@ -49,12 +35,8 @@ public class NodeCP {
     h = newH;
   }
 
-  /**
-   * Cambia el sample asociado al Nodo actual.
-   * @param newSample El nuevo sample asociado.
-   */
-  public void setSample(Pair newSample) {
-    sample = newSample;
+  public void addChild(TupleCP newChild) {
+    entries.add(newChild);
   }
 
   /**
@@ -66,22 +48,21 @@ public class NodeCP {
   }
 
   /**
+   * @return Devuelve el tamaño de los hijos.
+   */
+  public double size() {
+    return this.entries.size();
+  }
+
+  /**
    * Busca un nodo específico dentro de un M-Tree.
    * @return -1 si se encuentra, el número de ingresos a disco si lo encuentra.
    */
-  public int search(NodeCP mTree, Pair query) {
+  public NodeCP search(NodeCP mTree, Pair query) {
     // Comparar ingresos a disco
     // Buscar el nodo correspondiente
     // Cada vez que se ingresa a un nodo se suma 1
 
     return null;
-  }
-
-  public double size() {
-
-  }
-
-  public ArrayList<NodeCP> getChilds() {
-
   }
 }

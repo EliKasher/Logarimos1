@@ -1,8 +1,10 @@
 package com.example.logarimos1;
-
+import java.io.*;
 import java.util.ArrayList;
 
 public class Main {
+  static final Writer write = new Writer();
+
   //Tamaño de B
   static final Sizeof so = new Sizeof();
   static final int tamanoB = 4096 / so.sizeof(double.class);
@@ -17,45 +19,69 @@ public class Main {
   //Se crean objetos para llamar a los constructores de los árboles
   static final SS ss = new SS(tamanoB);
   static final CP cp = new CP(tamanoB);
-  static boolean isInputReady = false;
+  static boolean isInputReadySS = false;
+  static boolean isInputReadyCP = false;
 
-  public static void generateTestingPairs() {
-    //Generamos los inputs
-    for (int i = 10; i<26; i++) {
-      double size = Math.pow(2, i);
-      ArrayList<Pair> pairs = new ArrayList<>();
 
-      for(int j=0; j<i; j++) {
-        double x = Math.random();
-        double y = Math.random();
+  public static void generateTestingPairs(int endingFor) {
+    if (inputs.size() == 0) {
+      //Generamos los inputs
+      for (int i = 10; i < endingFor; i++) {
+        double size = Math.pow(2, i);
+        ArrayList<Pair> pairs = new ArrayList<>();
 
-        pairs.add(new Pair(x, y));
+        for (int j = 0; j < i; j++) {
+          double x = Math.random();
+          double y = Math.random();
+
+          pairs.add(new Pair(x, y));
+        }
+        inputs.add(pairs);
       }
-      inputs.add(pairs);
     }
   }
 
-  public static void startingProcess() {
-    //Creamos los inputs
-    generateTestingPairs();
-
-    //Creamos los árboles con SS y CP para cada input y los agregamos a las listas correspondientes
-    for(int i=0; i<inputs.size(); i++) {
-      NodeSS a1 = ss.ss(inputs.get(i));
-      arbolesSS.add(a1);
-
-      NodeCP a2 = cp.cp(inputs.get(i));
-      arbolesCP.add(a2);
+  public static void startingProcessSS(int limite) {
+    //Creamos los árboles con SS para cada input y los agregamos a las listas correspondientes
+    for(int i=0; i<limite; i++) {
+      NodeSS a = ss.ss(inputs.get(i));
+      arbolesSS.add(a);
     }
-    isInputReady = true;
+    isInputReadySS = true;
+  }
+
+  public static void startingProcessCP(int limite) {
+    //Creamos los árboles con SS y CP para cada input y los agregamos a las listas correspondientes
+    for(int i=0; i<limite; i++) {
+      NodeCP a = cp.cp(inputs.get(i));
+      arbolesCP.add(a);
+    }
+    isInputReadyCP = true;
   }
 
   public static void main(String[] args) {
-    if(!isInputReady) {
-      startingProcess();
+    // 11 a 26
+    generateTestingPairs(11);
+
+    // Crear los arboles SS
+    if(!isInputReadySS) {
+      startingProcessSS(1);
     }
 
-    // Realizar 100 búsquedas por algoritmo
+    // Crear los arboles CP
+    //if(!isInputReadyCP) {
+      //startingProcessCP();
+    //}
 
+    // Realizar 100 búsquedas por algoritmo
+    NodeSS a = arbolesSS.get(0);
+    Result r = a.search(new Pair(0.1, 0.1), 0.02);
+    ArrayList<Pair> points = r.getPoints();
+    int memoryAccess = r.getAccessCount();
+
+    write.write("resultadosSS.txt", Integer.toString(memoryAccess));
+    for (Pair p: points) {
+      write.write("resultadosSS.txt", p.toString());
+    }
   }
 }

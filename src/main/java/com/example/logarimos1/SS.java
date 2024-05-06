@@ -45,12 +45,13 @@ public class SS {
 
           if (cluster.getElements().size() >= nearest.getElements().size()) {
             c1 = cluster;
-            c2 = nearest;
+            c2 = nearest; // REVISAR PROBLEMA
           } else {
             c1 = nearest;
             c2 = cluster;
           }
         }
+        System.out.println("hola");
       }
 
       Cluster c1c2 = c1.join(c2);
@@ -82,6 +83,7 @@ public class SS {
       cOut.add(minMaxClusters.get(1));
     }
 
+
     return cOut;
   }
 
@@ -112,7 +114,7 @@ public class SS {
     result.setG(primaryG);
     result.setA(c);
 
-    // result = TupleSS(g,r,a = NodeSS(c = TupleSS(g,r,a = null)))
+    // result = TupleSS(g,r,a = NodeSS(c = TupleSS(g,r = 0,a = null)))
     return result;
   }
 
@@ -151,6 +153,7 @@ public class SS {
     result.setG(G);
     result.setR(R);
     result.setA(c);
+    // result = TupleSS(g,r,a = NodeSS(c = TupleSS(g,r,a = NodeSS(c = cositas))))
     return result;
   }
 
@@ -162,9 +165,11 @@ public class SS {
     ArrayList<Cluster> cOut = cluster(cIn);
 
     // Caso Base con cIn <= B -> Simplemente se forma un Nodo Hoja para todo (Aún así debe pasar por la función Cluster).
-    if (cIn.size() <=B) {
+    if (cIn.size() <= B) {
       NodeSS extNode = new NodeSS();
 
+      // Por cada entry que sale de outputHoja, conformamos un Nodo con c
+      // al cual se le añaden todas estas entries nuevas
       for (Cluster cluster : cOut) {
         TupleSS entry = outputHoja(cluster);
         extNode.addEntry(entry);

@@ -3,7 +3,7 @@ package com.example.logarimos1;
 import java.util.ArrayList;
 
 /**
- * Clase que representa un nodo creado por el algoritmo SS
+ * Clase que representa un nodo creado por el algoritmo SS.
  */
 public class NodeSS {
   private ArrayList<TupleSS> entries;
@@ -40,34 +40,32 @@ public class NodeSS {
 
   /**
    * Busca los pares dentro de un radio de búsqueda r para un punto q, en un M-Tree.
-   * @param mTree un NodeSS arbol.
    * @param q El punto sobre el que se busca
    * @param r Radio de búsqueda
    * @return La lista de resultados Result con los pares encontrados y sus accesos a memoria.
    */
-  public Result search(NodeSS mTree, Pair q,  double r) {
-    return auxSearch(mTree,q,r,null);
+  public Result search(Pair q,  double r) {
+    return this.auxSearch(q,r,null);
   }
 
   /**
    * Es un search con memoria.
    * Busca los pares dentro de un radio de búsqueda r para un punto q, en un M-Tree.
-   * @param mTree
-   * @param q
-   * @param r
-   * @param nodeG
+   * @param q El punto sobre el que se busca
+   * @param r Radio de búsqueda
+   * @param nodeG El medoide g del arbol previo.
    * @return null si no se encuentra, el array de pares coincidentes si los encuentra.
    */
-  public Result auxSearch(NodeSS mTree, Pair q, double r, Pair nodeG) {
+  public Result auxSearch(Pair q, double r, Pair nodeG) {
     // Creamos la estructura para almacenar el resultado
     Result res = new Result();
 
     // Cuando el arbol es nulo
-    if (mTree == null) {
+    if (this == null) {
       return null;
     }
     // Caso donde NodeSS(c = ArrayList<TupleSS> (g,r = 0,a = null))
-    ArrayList<TupleSS> treeEntries = mTree.getEntries();
+    ArrayList<TupleSS> treeEntries = this.getEntries();
     // Si el nodo es una hoja (nodo externo)
     if (treeEntries == null) {
       Pair p = nodeG;
@@ -82,14 +80,14 @@ public class NodeSS {
       // Caso donde NodeSS(c = ArrayList<TupleSS> (g,r,a = NodeSS(c)))
       res.memoryAccess(1);
 
-      for(TupleSS entry : mTree.getEntries()) {
+      for(TupleSS entry : this.getEntries()) {
         double d = q.dist(entry.getG());
 
         //Si la distancia es menor al radio de búsqueda, se ingresa para buscar recursivamente
         if (d <= r + entry.getR()) {
           Pair newNodeG = entry.getG();
 
-          Result resultChild = auxSearch(entry.getA(), q, r, newNodeG);
+          Result resultChild = entry.getA().auxSearch(q, r, newNodeG);
 
           //Se accede a los puntos encontrados por el hijo y se agregan al resultado general
           for (Pair point : resultChild.getPoints()) {
