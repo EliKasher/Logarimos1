@@ -1,13 +1,14 @@
 package com.example.logarimos1;
 import java.io.*;
 import java.util.ArrayList;
+import java.lang.Math;
 
 public class Main {
   static final Writer write = new Writer();
 
   //Tamaño de B
   static final Sizeof so = new Sizeof();
-  static final int tamanoB = 4096 / so.sizeof(double.class);
+  static final int tamanoB = (int) Math.ceil(4096 / so.sizeof(double.class));
 
   // Se arman inputs 2^10 -> 2^25 para construir M-Tree
   static final ArrayList<ArrayList<Pair>> inputs = new ArrayList<>();

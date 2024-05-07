@@ -6,6 +6,15 @@ import java.util.ArrayList;
  * Clase que representa un nodo creado por el algoritmo SS.
  */
 public class NodeSS {
+  //VARIABLES
+  /**
+   * El punto representante del nodo
+   */
+  private Pair point = new Pair(0,0);
+
+  /**
+   * Las entradas asociadas al nodo (tuplas)
+   */
   private ArrayList<TupleSS> entries;
 
   /**
@@ -13,6 +22,22 @@ public class NodeSS {
    */
   public NodeSS() {
     entries = new ArrayList<TupleSS>();
+  }
+
+  //GETTERS y SETTERS
+  /**
+   * @return el punto representante
+   */
+  public Pair getP(){
+    return point;
+  }
+
+  /**
+   * Cambia el punto representante asociado a este nodo
+   * @param newP el nuevo punto representante
+   */
+  public void setP(Pair newP){
+    this.point = newP;
   }
 
   /**
@@ -30,6 +55,8 @@ public class NodeSS {
     this.entries = entries;
   }
 
+
+  //MÉTODOS
   /**
    * Añade las entradas al nodo.
    * @param entry Una lista de entradas de Tuplas (g,r,a)
@@ -38,6 +65,10 @@ public class NodeSS {
     entries.add(entry);
   }
 
+
+
+
+  //REVISAR
   /**
    * Busca los pares dentro de un radio de búsqueda r para un punto q, en un M-Tree.
    * @param q El punto sobre el que se busca

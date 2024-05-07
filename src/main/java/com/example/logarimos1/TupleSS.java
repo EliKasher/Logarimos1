@@ -1,35 +1,36 @@
 package com.example.logarimos1;
-import java.util.ArrayList;
-/**
- *
- */
 
+/**
+ * Clase que representa una tupla, una entrada del estilo (p, cr, a) que estará contenida en un nodo
+ */
 public class TupleSS {
     //VARIABLES
-    /** Representa al medoide del nodo */
+    /** Representa al punto representante de la tupla */
     private Pair g = null;
-    /** El radio cobertor del nodo */
+
+    /** El radio cobertor de la tupla */
     private double r = 0;
-    /** Dirección a los hijos del nodo */
-    private NodeSS  c = null;
+
+    /** Dirección al hijo de esta tupla */
+    private NodeSS c = null;
 
     //GETTERS Y SETTERS
     /**
-     * Retorna los elementos del nodo
+     * Retorna el nodo hijo
      */
     public NodeSS getA() { return c;}
 
-    /** Retorna el punto medoide del cluster */
+    /** Retorna el punto asociado a la tupla */
     public Pair getG() {
       return g;
     }
 
-    /** Retorna el radio cobertor del cluster  */
+    /** Retorna el radio cobertor de la tupla  */
     public double getR() {
       return r;
     }
 
-    /** Setter del medoide */
+    /** Setter del punto representante */
     public void setG(Pair newG) {
       this.g = newG;
     }
@@ -38,6 +39,8 @@ public class TupleSS {
     public void setR(double newR) {
       this.r = newR;
     }
+
+    /** Setter del nodo hijo **/
     public void setA(NodeSS newC) {
       this.c = newC;
     }

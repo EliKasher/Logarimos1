@@ -2,6 +2,7 @@ package com.example.logarimos1;
 
 import static java.lang.Math.sqrt;
 import static java.lang.Math.pow;
+import java.util.ArrayList;
 
 /**
  * Esta clase representa un punto en el plano, representado por dos coordenadas de tipo double.
@@ -48,8 +49,32 @@ public class Pair {
     return false;
   }
 
+  /**
+   * Transforma las coordenadas del punto a un string.
+   * @return el string que representa al punto
+   */
   public String toString() {
     return "(" + x + "," + y + ")\n";
+  }
+
+  /**
+   * Busca el par más cercano dentro de una lista
+   * @return el índice del par en la lista dada
+   */
+  public int nearestPair(ArrayList<Pair> points){
+    //Vamos guardando la distancia menor encontrada y el índice del punto correspondiente
+    int returnIndex = 0;
+    double currentMinDist = Double.MAX_VALUE;
+
+    //Iteramos
+    for(int i=0; i<points.size(); i++){
+      double d = this.dist(points.get(i));
+      if(d<currentMinDist){
+        returnIndex = i;
+        currentMinDist = d;
+      }
+    }
+    return returnIndex;
   }
 }
 

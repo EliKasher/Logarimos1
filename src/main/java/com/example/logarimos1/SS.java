@@ -45,7 +45,7 @@ public class SS {
 
           if (cluster.getElements().size() >= nearest.getElements().size()) {
             c1 = cluster;
-            c2 = nearest; // REVISAR PROBLEMA
+            c2 = nearest;
           } else {
             c1 = nearest;
             c2 = cluster;
@@ -83,7 +83,6 @@ public class SS {
       cOut.add(minMaxClusters.get(1));
     }
 
-
     return cOut;
   }
 
@@ -93,12 +92,16 @@ public class SS {
    * @return Retorna el nodo hoja conformado
    */
   public TupleSS outputHoja(Cluster cIn) {
+    //Creamos las estructuras necesarias
     TupleSS result = new TupleSS();
     NodeSS c = new NodeSS();
     double r = 0;
     Pair primaryG = cIn.getG();
 
+    //Asignamos al nodo c el punto representante de este cluster
+    c.setP(primaryG);
 
+    //Luego, por cada punto creamos una tupla del estilo: (punto, 0, null) y lo agregamos al nodo
     for (Pair point : cIn.getElements()) {
       TupleSS extNode = new TupleSS();
       extNode.setG(point);
@@ -107,14 +110,16 @@ public class SS {
 
       c.addEntry(extNode);
 
+      //Actualizamos el radio si es necesario
       r = Math.max(r, primaryG.dist(extNode.getG()));
     }
 
+    //Definimos los datos de la tupla result
     result.setR(r);
     result.setG(primaryG);
     result.setA(c);
 
-    // result = TupleSS(g,r,a = NodeSS(c = TupleSS(g,r = 0,a = null)))
+    // result = TupleSS(g,r,a = NodeSS(c = {TupleSS(g,r = 0,a = null), ...}))
     return result;
   }
 
@@ -149,17 +154,22 @@ public class SS {
       R = Math.max(R, g.dist(G) + r);
     }
 
+    //DEfinimos el punto representante del nodo como el asociado a la tupla
+    c.setP(G);
+
+    //Definimos los datos de la tupla a retornar
     TupleSS result = new TupleSS();
     result.setG(G);
     result.setR(R);
     result.setA(c);
+
     // result = TupleSS(g,r,a = NodeSS(c = TupleSS(g,r,a = NodeSS(c = cositas))))
     return result;
   }
 
   /**
    * Aplica el algoritmo SS sobre un conjunto de puntos.
-   * @returns un M-Tree construido
+   * @returns Un M-Tree construido
    */
   public NodeSS ss(ArrayList<Pair> cIn) {
     ArrayList<Cluster> cOut = cluster(cIn);
@@ -176,6 +186,7 @@ public class SS {
       }
 
       return extNode;
+
     } else {
       //Conjunto para hacer el return
       ArrayList<TupleSS> newC = new ArrayList<TupleSS>();
