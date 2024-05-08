@@ -1,5 +1,6 @@
 package com.example.logarimos1;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Sizeof {
@@ -34,8 +35,14 @@ public class Sizeof {
     if (dataType == ArrayList.class || dataType == ArrayList.class) {
       return 4; //Dejamos como default el tamaño de un puntero
     }
-    if (dataType == Pair.class || dataType == Pair.class) {
+    if (dataType == Pair.class) {
       return 2*Double.SIZE;
+    }
+    if (dataType == NodeSS.class) {
+      return sizeof(Pair.class) + sizeof(ArrayList.class);
+    }
+    if (dataType == NodeCP.class) {
+      return sizeof(Pair.class) + sizeof(ArrayList.class);
     }
     return 4;
   }

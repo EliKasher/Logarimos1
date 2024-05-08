@@ -8,7 +8,7 @@ import java.lang.Math;
 /**
  * Clase que conforma el método Ciaccia-Patella.
  */
-public class CP {
+public class CP{
   //Hay que definir bien estos valores
   double B = 2;
   double b = 0.5*B;

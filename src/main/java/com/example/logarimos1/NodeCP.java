@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * Clase que representa un nodo creado por el algoritmo CP.
  */
-public class NodeCP {
+public class NodeCP extends Node {
   /** Altura del árbol */
   private int h = Integer.MAX_VALUE;
   /** Lista de nodos hijos */

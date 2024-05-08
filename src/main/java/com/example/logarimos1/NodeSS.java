@@ -1,11 +1,13 @@
 package com.example.logarimos1;
 
+import javafx.css.Size;
+
 import java.util.ArrayList;
 
 /**
  * Clase que representa un nodo creado por el algoritmo SS.
  */
-public class NodeSS {
+public class NodeSS extends Node {
   //VARIABLES
   /**
    * El punto representante del nodo
