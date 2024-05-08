@@ -156,34 +156,38 @@ public class Cluster {
 
     //Iteramos sobre los puntos del cluster y vamos evaluando
     ArrayList<Pair> e = this.getElements();
+
     for (Pair pt1 : e) {
-      ArrayList<Pair> e2 = e;
-      //Eliminamos este punto para no repetir
-      e2.remove(pt1);
-      for (Pair pt2 : e2) {
-        //Eliminamos este punto para no repetir
-        e2.remove(pt2);
+      for (Pair pt2 : e) {
+        if (pt1.equals(pt2)) {
+          continue;
+        } else {
+          ArrayList<Pair> e2 = (ArrayList<Pair>) e.clone();
 
-        //Agregamos estos puntos a clusters como medoides
-        Cluster temporalC1 = new Cluster();
-        Cluster temporalC2 = new Cluster();
-        temporalC1.addElement(pt1);
-        temporalC2.addElement(pt2);
+          //Eliminamos estos puntos para no repetir
+          e2.remove(pt1);
+          e2.remove(pt2);
 
-        //Guardamos el tamaño inicial de e2
-        int n = e2.size();
+          //Agregamos estos puntos a clusters como medoides
+          Cluster temporalC1 = new Cluster();
+          Cluster temporalC2 = new Cluster();
+          temporalC1.addElement(pt1);
+          temporalC2.addElement(pt2);
 
-        //Agregamos los demás puntos tomando el par más cercano a uno de los clusters alternadamente
-        for (int i = 0; i < n; i++) {
-          if (i % 2 == 0) { //Agregamos al cluster C1
-            int nearIndex = pt1.nearestPair(e2);
-            temporalC1.addElement(e2.get(nearIndex));
 
-            //removemos el punto de e2
-            e2.remove(e2.get(nearIndex));
+          //Guardamos el tamaño inicial de e2
+          int n = e2.size();
 
-          } else {
-            { //Agregamos al cluster C2
+          //Agregamos los demás puntos tomando el par más cercano a uno de los clusters alternadamente
+          for (int i = 0; i < n; i++) {
+            if (i % 2 == 0) { //Agregamos al cluster C1
+              int nearIndex = pt1.nearestPair(e2);
+              temporalC1.addElement(e2.get(nearIndex));
+
+              //removemos el punto de e2
+              e2.remove(e2.get(nearIndex));
+            } else {
+              //Agregamos al cluster C2
               int nearIndex = pt2.nearestPair(e2);
               temporalC2.addElement(e2.get(nearIndex));
 
@@ -191,7 +195,6 @@ public class Cluster {
               e2.remove(e2.get(nearIndex));
             }
           }
-
           //Conseguimos el máximo entre sus radios cobertores
           double currentR = Math.max(temporalC1.getR(), temporalC2.getR());
 
@@ -199,7 +202,6 @@ public class Cluster {
           if (currentR < finalR) {
             c1 = temporalC1;
             c2 = temporalC2;
-
             finalR = currentR;
           }
         }
@@ -210,7 +212,6 @@ public class Cluster {
     ArrayList<Cluster> a = new ArrayList<Cluster>();
     a.add(c1);
     a.add(c2);
-
     return a;
   }
   

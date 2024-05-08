@@ -38,7 +38,7 @@ public class SS {
       double actualDist = Double.MAX_VALUE;
 
       for (Cluster cluster : c) {
-        Cluster nearest = cluster.nearest(c);
+        Cluster nearest = cluster.nearest((ArrayList<Cluster>) c.clone());
 
         if (cluster.getG().dist(nearest.getG()) < actualDist) {
           actualDist = cluster.getG().dist(nearest.getG());
@@ -51,13 +51,12 @@ public class SS {
             c2 = cluster;
           }
         }
-        System.out.println("hola");
       }
 
       Cluster c1c2 = c1.join(c2);
       c.remove(c1);  // Hay que probar si esta linea funciona adecuadamente :0
 
-      if(c1c2.getElements().size() <= B) {
+      if (c1c2.getElements().size() <= B) {
         c.remove(c2);
         c.add(c1c2);
       } else {
@@ -99,7 +98,7 @@ public class SS {
     Pair primaryG = cIn.getG();
 
     //Asignamos al nodo c el punto representante de este cluster
-    c.setP(primaryG);
+    c.setPoint(primaryG);
 
     //Luego, por cada punto creamos una tupla del estilo: (punto, 0, null) y lo agregamos al nodo
     for (Pair point : cIn.getElements()) {
@@ -155,7 +154,7 @@ public class SS {
     }
 
     //DEfinimos el punto representante del nodo como el asociado a la tupla
-    c.setP(G);
+    c.setPoint(G);
 
     //Definimos los datos de la tupla a retornar
     TupleSS result = new TupleSS();
@@ -200,8 +199,12 @@ public class SS {
         c.add(entry);
       }
 
+
+      if(c.size() <= B){
+        newC = (ArrayList<TupleSS>) c.clone();
+      }
       //Mientras |C| > B
-      while(c.size() > B) {
+      while (c.size() > B) {
         //Armamos el conjunto cIn2, que contiene los medoides (puntos) de los clusters de c
         ArrayList<Pair> cIn2 = new ArrayList<>();
 
@@ -210,7 +213,6 @@ public class SS {
         }
         //Luego creamos el conjunto de clusters cOut2, en base al cIn2
         ArrayList<Cluster> cOut2 = cluster(cIn2);
-
         //Conjunto de listas de nodos Cmra
         ArrayList<ArrayList<TupleSS>> cMra = new ArrayList<ArrayList<TupleSS>>();
 
@@ -223,9 +225,13 @@ public class SS {
           ArrayList<TupleSS> s = new ArrayList<TupleSS>();
 
           //Iteramos sobre los elementos de c para encontrar las entradas que satisfagan la condición de s
-          for (TupleSS entry : c) {
+          int n = c.size();
+          ArrayList<TupleSS> cCopy = (ArrayList<TupleSS>) c.clone();
+          for (int i=0; i<n; i++) {
+            TupleSS entry = cCopy.get(i);
             if (clusterElements.contains(entry.getG())) {
               s.add(entry);
+              c.remove(entry);
             }
           }
 

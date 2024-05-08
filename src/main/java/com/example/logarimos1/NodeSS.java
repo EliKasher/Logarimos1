@@ -28,7 +28,7 @@ public class NodeSS {
   /**
    * @return el punto representante
    */
-  public Pair getP(){
+  public Pair getPoint(){
     return point;
   }
 
@@ -36,7 +36,7 @@ public class NodeSS {
    * Cambia el punto representante asociado a este nodo
    * @param newP el nuevo punto representante
    */
-  public void setP(Pair newP){
+  public void setPoint(Pair newP){
     this.point = newP;
   }
 
@@ -65,29 +65,13 @@ public class NodeSS {
     entries.add(entry);
   }
 
-
-
-
-  //REVISAR
   /**
    * Busca los pares dentro de un radio de búsqueda r para un punto q, en un M-Tree.
    * @param q El punto sobre el que se busca
    * @param r Radio de búsqueda
-   * @return La lista de resultados Result con los pares encontrados y sus accesos a memoria.
-   */
-  public Result search(Pair q,  double r) {
-    return this.auxSearch(q,r,null);
-  }
-
-  /**
-   * Es un search con memoria.
-   * Busca los pares dentro de un radio de búsqueda r para un punto q, en un M-Tree.
-   * @param q El punto sobre el que se busca
-   * @param r Radio de búsqueda
-   * @param nodeG El medoide g del arbol previo.
    * @return null si no se encuentra, el array de pares coincidentes si los encuentra.
    */
-  public Result auxSearch(Pair q, double r, Pair nodeG) {
+  public Result search(Pair q, double r) {
     // Creamos la estructura para almacenar el resultado
     Result res = new Result();
 
@@ -95,11 +79,12 @@ public class NodeSS {
     if (this == null) {
       return null;
     }
+
     // Caso donde NodeSS(c = ArrayList<TupleSS> (g,r = 0,a = null))
     ArrayList<TupleSS> treeEntries = this.getEntries();
     // Si el nodo es una hoja (nodo externo)
     if (treeEntries == null) {
-      Pair p = nodeG;
+      Pair p = this.getPoint();
       double d = q.dist(p);
 
       if (d <= r) {
@@ -116,17 +101,20 @@ public class NodeSS {
 
         //Si la distancia es menor al radio de búsqueda, se ingresa para buscar recursivamente
         if (d <= r + entry.getR()) {
-          Pair newNodeG = entry.getG();
+          if (entry.getA() == null) {
+            res.addPoint(entry.getG());
+          } else {
+            Result resultChild = entry.getA().search(q, r);
 
-          Result resultChild = entry.getA().auxSearch(q, r, newNodeG);
+            //Se accede a los puntos encontrados por el hijo y se agregan al resultado general
+            for (Pair point : resultChild.getPoints()) {
+              res.addPoint(point);
+            }
 
-          //Se accede a los puntos encontrados por el hijo y se agregan al resultado general
-          for (Pair point : resultChild.getPoints()) {
-            res.addPoint(point);
+            //Se accede a la cantidad de accesos de memoria del hijo y se suman al resultado final
+            res.memoryAccess(resultChild.getAccessCount());
           }
 
-          //Se accede a la cantidad de accesos de memoria del hijo y se suman al resultado final
-          res.memoryAccess(resultChild.getAccessCount());
         }
       }
     }
