@@ -1,7 +1,5 @@
 package com.example.logarimos1;
 
-import javafx.scene.Node;
-
 import java.util.ArrayList;
 
 /**
@@ -9,15 +7,23 @@ import java.util.ArrayList;
  */
 public class NodeCP extends Node {
   /** Altura del árbol */
-  private int h = Integer.MAX_VALUE;
+  private int h = 0;
   /** Lista de nodos hijos */
   private ArrayList<TupleCP> entries = new ArrayList<TupleCP>();
+  private Pair sample = null;
 
   /**
    * @return altura del nodo
    */
   public int getH() {
     return h;
+  }
+
+  /**
+   * @return Devuelve el sample del nodo.
+   */
+  public Pair getSample() {
+    return sample;
   }
 
   /**
@@ -35,7 +41,24 @@ public class NodeCP extends Node {
     h = newH;
   }
 
+  /**
+   * Cambia el sample asociado al nodo.
+   * @param newSample Un nuevo par asociado al nodo.
+   */
+  public void setSample(Pair newSample) {
+    sample = newSample;
+  }
+
   public void addChild(TupleCP newChild) {
+    //si un nodo vale 1
+    int hActual = this.getH() - 1;
+    NodeCP nodo = newChild.getA();
+    if(nodo != null) {
+      int nodoH = nodo.getH();
+      if(nodoH > hActual) {
+        this.setH(nodoH);
+      }
+    }
     entries.add(newChild);
   }
 
@@ -44,7 +67,11 @@ public class NodeCP extends Node {
    * @param cIn Lista de puntos (Pares).
    */
   public void insert(ArrayList<Pair> cIn) {
-
+    for (Pair p : cIn) {
+      TupleCP entry = new TupleCP();
+      entry.setSample(p);
+      this.addChild(entry);
+    }
   }
 
   /**
@@ -55,14 +82,93 @@ public class NodeCP extends Node {
   }
 
   /**
-   * Busca un nodo específico dentro de un M-Tree.
-   * @return -1 si se encuentra, el número de ingresos a disco si lo encuentra.
+   * Busca los pares dentro de un radio de búsqueda r para un punto q, en un M-Tree.
+   * @param q El punto sobre el que se busca
+   * @param r Radio de búsqueda
+   * @return null si no se encuentra, el array de pares coincidentes si los encuentra.
    */
-  public NodeCP search(NodeCP mTree, Pair query) {
-    // Comparar ingresos a disco
-    // Buscar el nodo correspondiente
-    // Cada vez que se ingresa a un nodo se suma 1
+  @Override
+  public Result search(Pair q, double r) {
+    // Creamos la estructura para almacenar el resultado
+    Result res = new Result();
 
-    return null;
+    // Cuando el arbol es nulo
+    if (this == null) {
+      return null;
+    }
+
+    // Caso donde NodeCP(c = ArrayList<TupleCP> (sample,r = 0,a = null))
+    ArrayList<TupleCP> treeEntries = this.getEntries();
+    // Si el nodo es una hoja (nodo externo)
+    if (treeEntries == null) {
+      Pair p = this.getSample();
+      double d = q.dist(p);
+
+      if (d <= r) {
+        res.addPoint(p);
+      }
+    } else {
+      // Si el nodo es interno, significa que vamos a acceder a disco para obtener su infromación
+      // por lo que aumentamos el contador del resultado
+      // Caso donde NodeCP(c = ArrayList<TupleCP> (sample,r,a = NodeSS(c)))
+      res.memoryAccess(1);
+
+      for(TupleCP entry : this.getEntries()) {
+        double d = q.dist(entry.getSample());
+
+        //Si la distancia es menor al radio de búsqueda, se ingresa para buscar recursivamente
+        if (d <= r + entry.getR()) {
+          if (entry.getA() == null) {
+            res.addPoint(entry.getSample());
+          } else {
+            Result resultChild = entry.getA().search(q, r);
+
+            //Se accede a los puntos encontrados por el hijo y se agregan al resultado general
+            for (Pair point : resultChild.getPoints()) {
+              res.addPoint(point);
+            }
+
+            //Se accede a la cantidad de accesos de memoria del hijo y se suman al resultado final
+            res.memoryAccess(resultChild.getAccessCount());
+          }
+        }
+      }
+    }
+    return res;
+  }
+
+  /**
+   * Busca el sample asociado al subTree.
+   * @param subTree Es el subarbol que queremos colgar de este arbol.
+   * @return El arbol donde se encuentra el sample.
+   */
+  public void getChildBySample(NodeCP subTree) {
+    //Sacamos el punto representante del subTree, un sample que debe pertenecer a éste nodo
+    Pair subTreeSample = subTree.getSample();
+
+    //Buscamos el subTreeSample en las tuplas de este nodo
+    for (TupleCP entry : this.getEntries()) {
+      NodeCP child = entry.getA();
+      if (child == null) {
+        if(entry.getSample().equals(subTreeSample)) {
+          //Si la tuplaosee el sample buscado, se le agrega el nodo entregado como hijo
+          entry.setA(subTree);
+        }
+        //Si no es la tupla buscada simplemente no se hace nada
+      } else {
+        //Si la tupla tiene un nodo asociado, se busca recursivamente en ese nodo
+        child.getChildBySample(subTree);
+      }
+    }
+  }
+
+  /**
+   * Se inicializan los radios cobertores para todos los nodos y entradas.
+   */
+  public void initializeR() {
+    // Por cada entrada en el nodo, se setea su radio cobertor
+    for (TupleCP entry : this.getEntries()) {
+      entry.initializeR(this.getSample());
+    }
   }
 }

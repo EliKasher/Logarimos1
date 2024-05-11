@@ -7,10 +7,10 @@ public class TupleCP {
   private double r = 0;
 
   /** El sample de esta tupla */
-  private Pair sample = null;
+  private Pair sample;
 
   /** Nodo que contiene tuplas 'hijas' */
-  private NodeCP a = null;
+  private NodeCP a;
 
   public TupleCP() {
   }
@@ -52,32 +52,47 @@ public class TupleCP {
     sample = newSample;
   }
 
+  /**
+   * Añade un nodo hijo a la entrada.
+   * @param nodeCP Un nodo.
+   */
+  public void setA(NodeCP nodeCP) {
+    this.a = a;
+  }
 
   /**
-   * Devuelve el sample del árbol buscado si se encuentra en el mismo.
-   * @param searchSample El sample buscado
-   * @return El arbol donde se encuentra el sample.
+   * Setea los radios cobertores de ésta tupla y las asociadas a su hijo nodo.
+   * @param lastSample el sample más cercano anterior a esta tupla
+   * @return la distancia entre el punto de ésta tupla y el punto lastSample
    */
-  public TupleCP getChildBySample(Pair searchSample) {
-    //Si el sample buscado corresponde al de este árbol lo retornamos
-    if(this.sample.equals(searchSample)){
-      return this;
+  public double initializeR(Pair lastSample) {
+    NodeCP child = this.getA();
+    // Si la tupla no tiene un nodo hijo, significa que es una 'tupla hoja',
+    // por lo que no se actualiza su radio cobertor y se retorna la distancia
+    // al sample 'más cercano' (entregado como lastSample)
+    if(child == null) {
+      return lastSample.dist(this.getSample());
+      // Estamos en un nodo interno
     } else {
-      ArrayList<TupleCP> sampleChilds = this.getA().getEntries();
-      //Si no, se revisa si no hay más hijos
-      if (sampleChilds.isEmpty()) {
-        return null;
-      } else {
-        //Si hay hijos, se revisa recursivamente en ellos
-        TupleCP result = new TupleCP();
-        for (TupleCP child: sampleChilds) {
-          TupleCP temp = child.getChildBySample(searchSample);
-          if(temp != null) {
-            result = temp;
-          }
+      // Si esta tupla tiene hijos,
+      // se debe encontrar la máxima distancia
+      // entre este nodo y su hijo
+      double maxDist = 0;
+      for (TupleCP entry : child.getEntries()) {
+        double d = entry.initializeR(this.getSample());
+        // Si la distancia es mayor a la actual se guarda
+        if (d > maxDist) {
+          maxDist = d;
         }
-        return result;
       }
+      // Se setea el radio cobertor como la máxima
+      // distancia entre el sample actual con alguno de sus hijos sumado
+      // con la distancia entre el sample de esta tupla con el lastSample
+      double R = maxDist + lastSample.dist(this.getSample());
+      this.setR(R);
+      // Se retorna la máxima distancia para la recursión
+      return R;
     }
   }
+
 }

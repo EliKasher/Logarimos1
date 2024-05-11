@@ -73,6 +73,7 @@ public class NodeSS extends Node {
    * @param r Radio de búsqueda
    * @return null si no se encuentra, el array de pares coincidentes si los encuentra.
    */
+  @Override
   public Result search(Pair q, double r) {
     // Creamos la estructura para almacenar el resultado
     Result res = new Result();

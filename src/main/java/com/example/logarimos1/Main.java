@@ -27,22 +27,22 @@ public class Main {
   static final CP cp = new CP(tamanoBCP);
 
   /**
-   * Genera los pares de puntos desde 2^10 hasta 2^limite
-   * y los guarda en un hash de inputs globales, con su potencia como llave.
-   * @param limite es la potencia limite - 1 que se quiere lograr.
+   * Genera los pares de puntos desde 2^10 hasta 2^25
+   * y los guarda en un archivo de texto con su respectivo nombre
+   *
    */
-  public static void generateTestingPairs(int limite) {
+  public static void generateTestingPairs() {
     if (inputs.size() == 0) {
       //Generamos los inputs
-      for (int i = 10; i < limite + 1; i++) {
+      for (int i = 10; i < 26; i++) {
         double size = Math.pow(2, i);
         ArrayList<Pair> pairs = new ArrayList<>();
 
         for (int j = 0; j < size; j++) {
           double x = Math.random();
           double y = Math.random();
-
           pairs.add(new Pair(x, y));
+          write.write("inputs/points"+Integer.toString(i)+".txt", Double.toString(x) + "," + Double.toString(y));
         }
         //Los guardamos en un hash, la llave corresponde al tamaño correspondiente del input (2^i) y
         //su valor es la lista de puntos
@@ -65,22 +65,21 @@ public class Main {
    * Crea un árbol CP con los inputs de 2^potencia entregada.
    * @param limite
    */
-  public static void createTreeCP(int limite) {
-    //Creamos los árboles con SS y CP para cada input y los agregamos a las listas correspondientes
-    for(int i=0; i<limite; i++) {
-      NodeCP a = cp.cp(inputs.get(i));
-      arbolesCP.add(a);
-    }
+  public static void createTreeCP(int index) {
+    //Creamos los árboles CP para cada input y los agregamos a las listas correspondientes
+    NodeCP a = cp.cp(inputs.get(index));
+    arbolesCP.add(a);
   }
 
   /**
    * Genera 200 puntos aleatorios y los escribe como x,y en un archivo de texto querys.txt
    */
-  public static void random_point() {
-    for (int j = 0; j < 100; j++) {
+  public static void random_point(int potencia) {
+    double size = Math.pow(2, potencia);
+    for (int j = 0; j < size; j++) {
       double x = Math.random();
       double y = Math.random();
-      write.write("querys.txt", Double.toString(x) + "," + Double.toString(y));
+      write.write("points/points"+Integer.toString(potencia)+".txt", Double.toString(x) + "," + Double.toString(y));
     }
   }
 
@@ -127,19 +126,24 @@ public class Main {
    * @param args
    */
   public static void main(String[] args) {
-    //ALGORITMO SS TESTEO
+    //Generamos los inputs solo una vez para testear con los mismos en ambos árboles,
+    //los guardamos en los archivos dentro de la carpeta inputs
 
-    //Generamos los inputs, que se guardan en el hash map inputs
-
-    generateTestingPairs(15);
+    //generateTestingPairs();
     System.out.println("Pares de testeo listos");
     //Leemos el listado de querys del archivo 'querys.txt' para obtener los 100 puntos de testeo, se guardarán
     //en la variable querys
-    reader.read("querys.txt", querys);
+    reader.read("querys/querys.txt", querys);
     System.out.println("Querys listas");
+    for (int i = 10; i < 11; i++) {
+      ArrayList<Pair> pairs = new ArrayList<Pair>();
+      reader.read("inputs/points"+Integer.toString(i)+".txt", pairs);
+      inputs.put(i, pairs);
+    }
+    System.out.println(inputs.get(10).get(0));
 
     /**
-   //PARTE 1 Zamy
+    //PARTE 1 Zamy
    //Generamos los árboles de largo de inputs 2^10 y 2^11
    createTreeSS(10);
    createTreeSS(11);
@@ -156,20 +160,21 @@ public class Main {
    //Generamos los árboles de largo de inputs 2^14 y 2^15
    createTreeSS(14);
    createTreeSS(15);
-
-    */
-
-
-    //Hacemos las 100 queries para los árboles correspondientes, ubicados en el array arbolesSS
-
-    NodeSS a1 = arbolesSS.get(0);
-    NodeSS a2 = arbolesSS.get(1);
+     
+   //Hacemos las 100 queries para los árboles correspondientes, ubicados en el array arbolesSS
+     NodeSS a1 = arbolesSS.get(0);
+     NodeSS a2 = arbolesSS.get(1);
+  */
+    // Generamos arboles CP
+    createTreeCP(10);
+    NodeCP a1  = arbolesCP.get(0);
 
     System.out.println("Inicio Querys");
-    double dsA1 = hundredQueries(a1, "resultsSS1.txt");
+    double dsA1 = hundredQueries(a1, "results/resultsCP1.txt");
     System.out.println("Query Arbol 1 lista");
-    double dsA2 = hundredQueries(a2, "resultsSS2.txt");
+    //dsA2 = hundredQueries(a2, "results/resultsSS2.txt");
     System.out.println("Query Arbol 2 lista");
     // Desviación Estandar Sum((x-avgX)^2)/n, xAvg= promedio de la query, x = un punto de la query, n = 100
+
   }
 }

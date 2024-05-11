@@ -13,8 +13,6 @@ public class Writer {
       bw.write(content);
       bw.newLine(); // Añade una nueva línea
 
-      System.out.println("Se escribió correctamente en el archivo.");
-
     } catch (IOException e) {
       System.err.println("Ocurrió un error al escribir en el archivo: " + e.getMessage());
     }
