@@ -53,11 +53,13 @@ public class NodeCP extends Node {
     //si un nodo vale 1
     int hActual = this.getH() - 1;
     NodeCP nodo = newChild.getA();
-    if(nodo != null) {
+    if (nodo != null) {
       int nodoH = nodo.getH();
-      if(nodoH > hActual) {
-        this.setH(nodoH);
+      if (nodoH > hActual) {
+        this.setH(nodoH+1);
       }
+    } else {
+      this.setH(1);
     }
     entries.add(newChild);
   }
@@ -71,6 +73,47 @@ public class NodeCP extends Node {
       TupleCP entry = new TupleCP();
       entry.setSample(p);
       this.addChild(entry);
+    }
+    Pair g = this.medoide(cIn);
+    this.setSample(g);
+  }
+
+  /**
+   * Calcula un medoide representante para el Nodo y lo asigna.
+   */
+  public Pair medoide(ArrayList<Pair> cIn) {
+    Pair g = new Pair(0,0);
+    // Sólo hay 1 candidato a medoide
+    if (cIn.size() == 1) {
+      g = cIn.get(0);
+      return g;
+    } else {
+      //Guardamos las distancias máximas de cada punto al considerarlo medoide
+      double radio = Double.MAX_VALUE;
+      //Guardamos el mejor candidato a medoide
+      Pair m = new Pair(0, 0);
+
+      //Iteramos sobre todo par de elementos en el medioide
+      for (Pair p : cIn) {
+
+        //Guardamos, para el punto p, la distancia máxima a cualquier otro punto
+        double maxDist = 0;
+
+        //Vamos a iterar nuevamente, considerando al punto p como 'centro' y calculando el radio según p
+        for (Pair p2 : cIn) {
+          if (p.dist(p2) > maxDist) {
+            maxDist = p.dist(p2);
+          }
+        }
+
+        //Si la distancia máxima es menor que el radio que se tenía anteriormente
+        if (maxDist < radio) {
+          radio = maxDist;
+          m = p;
+        }
+      }
+      g = m;
+      return g;
     }
   }
 
@@ -113,7 +156,7 @@ public class NodeCP extends Node {
       // Caso donde NodeCP(c = ArrayList<TupleCP> (sample,r,a = NodeSS(c)))
       res.memoryAccess(1);
 
-      for(TupleCP entry : this.getEntries()) {
+      for (TupleCP entry : this.getEntries()) {
         double d = q.dist(entry.getSample());
 
         //Si la distancia es menor al radio de búsqueda, se ingresa para buscar recursivamente
@@ -153,6 +196,8 @@ public class NodeCP extends Node {
         if(entry.getSample().equals(subTreeSample)) {
           //Si la tuplaosee el sample buscado, se le agrega el nodo entregado como hijo
           entry.setA(subTree);
+          int h = subTree.getH();
+          this.setH(h+this.getH());
         }
         //Si no es la tupla buscada simplemente no se hace nada
       } else {

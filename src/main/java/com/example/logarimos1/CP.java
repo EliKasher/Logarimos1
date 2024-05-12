@@ -2,6 +2,7 @@ package com.example.logarimos1;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Random;
 import java.lang.Math;
 
@@ -38,7 +39,6 @@ public class CP {
         resultIndex = i;
       }
     }
-
     return resultIndex;
   }
 
@@ -53,11 +53,9 @@ public class CP {
     int index = nearestSample(p, f);
 
     //Se obtiene la lista de puntos de ese sample y se actualiza después de agregar el punto p
-    ArrayList<Pair> points = new ArrayList<>();
-    points = (ArrayList<Pair>) hash.get(index).clone();
+    ArrayList<Pair> points = new ArrayList<>(hash.get(index));
     points.add(p);
     hash.put(index, points);
-
     return hash;
   }
 
@@ -83,6 +81,31 @@ public class CP {
       }
     }
     return result;
+  }
+
+  /**
+   * Cada vez que se remueven elementos del hash, hay que actualizar las llaves desde
+   * la llave index, restándole 1 al valor a las llaves.
+   * @param hash Un hashmap con llaves a los conjuntos de pares de un sample.
+   * @param index El index removido desde donde se removió un elemento.
+   * @return
+   */
+  public HashMap<Integer, ArrayList<Pair>> updateHash(HashMap<Integer, ArrayList<Pair>> hash, int index) {
+    //desde el index en adelante en el hash se deben actualizar los índices
+    int hashSize = hash.size();
+
+    if (hashSize == index+1) {
+      hash.remove(index);
+    } else {
+      for (int i = index; i < hash.size()-1; i++) {
+        ArrayList<Pair> points = hash.get(i+1);
+        if (points != null) {
+          hash.put(i, points);
+        }
+      }
+      hash.remove(hash.size()-1);
+    }
+    return hash;
   }
 
   /**
@@ -117,7 +140,7 @@ public class CP {
         samples = new HashMap<Integer, ArrayList<Pair>>();
 
         //k corresponde a la cantidad de puntos aleatorios a escoger para conformar la lista de samples
-        int k = (int) Math.min(B, n / B);
+        int k = (int) Math.min(B, Math.ceil(n / B));
         ArrayList<Integer> outIndex = new ArrayList<>();
 
         //Se hace la selección de los índices de puntos que serán asigandos como samples
@@ -125,8 +148,9 @@ public class CP {
         while (outIndex.size() < k) {
           int j = random.nextInt(n);
           Pair pt = cIn.get(j);
+
           //Se revisa que los puntos a insertar no sean repetidos
-          if (!outIndex.contains(pt)) {
+          if (!outIndex.contains(pt) && !f.contains(pt)) {
             outIndex.add(j);
             f.add(pt);
 
@@ -137,25 +161,34 @@ public class CP {
             samples.put(index, values);
           }
         }
+
         //Asignamos un sample a cada punto de cIn
         for (int i = 0; i < n; i++) {
           // hay k elementos en f y k en samples
           samples = asignSample(cIn.get(i), f, samples);
         }
 
+        Iterator<Pair> iterator = f.iterator();
+
         //Revisamos si hay algun sample de tamaño menor a b
-        for (int i = 0; i < f.size(); i++) {
-          ArrayList<Pair> points = new ArrayList<>();
-          points = (ArrayList<Pair>) samples.get(i).clone();
+        while (iterator.hasNext()) {
+          Pair currentPoint = iterator.next();
+          int i = f.indexOf(currentPoint);
+          ArrayList<Pair> points = new ArrayList<>(samples.get(i));
 
           //En caso de cumplir la condicion, el sample se vuelve un punto corriente y se reasigna junto con sus hijos.
           if (points.size() < b) {
-            samples.remove(i);
-            Pair removedPoint = f.remove(i);
+            iterator.remove();
+
+            if (!(i == samples.size()-1)) {
+              samples = updateHash(samples, i);
+            } else {
+              samples.remove(i);
+            }
 
             //Este sample pasa a ser un punto 'normal' por lo que lo agregamos a la lista de puntos por reasignar
             //después de eliminarlo de la lista de samples
-            points.add(removedPoint);
+            points.add(currentPoint);
 
             // Cada punto del sample eliminado es reasignado al siguiente más cercano
             for (Pair point : points) {
@@ -165,47 +198,58 @@ public class CP {
         }
         //En caso de que el tamaño de F sea 1, repetimos el ciclo
       } while (f.size() == 1);
-      System.out.println("Salio del while");
+
       //Creamos una lista para ir almacenando los árboles entregados por cp
       ArrayList<NodeCP> trees = new ArrayList<NodeCP>();
 
-      ArrayList<Pair> fCopy = new ArrayList<>();
-      int tamanoF = f.size();
+      Iterator<Pair> iterator = f.iterator();
 
-      for (int i = 0; i < tamanoF; i++) {
+      while (iterator.hasNext()) {
+        Pair currentPoint = iterator.next();
+        int i = f.indexOf(currentPoint);
+
         NodeCP a = cp(samples.get(i));
+        a.setSample(f.get(i));
 
         if (a.size() < b) {
           //Si el tamaño del nodo es menor a b, se trabaja con sus subárboles como nuevos árboles
-          Pair pfj = f.remove(i);
+          iterator.remove();
+
+          if (!(i == samples.size()-1)) {
+            samples = updateHash(samples, i);
+          } else {
+            samples.remove(i);
+          }
 
           ArrayList<TupleCP> childs = a.getEntries();
           for (int j = 0; j < childs.size(); j++) {
+
             TupleCP child = childs.get(j); // Pasa de ser tupla a nodo
 
             trees.add(child.getA()); // se añaden los subarboles como arboles a T (trees)
           }
         } else {
           //Si no, se agrega el árbol directamente
-          trees.add(a);
+          trees.add(a); // se añaden los subarboles como arboles a T (trees)
         }
       }
 
       // Balanceamiento
       // Buscamos la altura mínima entre los subárboles
       int h = Integer.MAX_VALUE;
+
+      int contador = 0;
       for (int i = 0; i < trees.size(); i++) {
-        int tempH = trees.get(i).getH();
-        if (tempH < h) {
-          h = tempH;
-        }
+          int tempH = trees.get(i).getH();
+          if (tempH < h) {
+            h = tempH;
+          }
       }
 
       // Se define el conjunto T vacío
       ArrayList<NodeCP> t = new ArrayList<>();
       NodeCP tSup = new NodeCP();
-      ArrayList<NodeCP> treesCopy = new ArrayList<>();
-      treesCopy = (ArrayList<NodeCP>) trees.clone();
+      ArrayList<NodeCP> treesCopy = new ArrayList<>(trees);
       int treesSize = trees.size();
 
       // Los subarboles en trees contienen solo una entry
@@ -217,6 +261,13 @@ public class CP {
         } else {
           //Se saca el sample del conjunto
           f.remove(i);
+
+          if (!(i == samples.size() - 1)) {
+            samples = updateHash(samples, i);
+          } else {
+            samples.remove(i);
+          }
+
           trees.remove(i);
 
           // Se buscan los subarboles de altura h
@@ -224,24 +275,35 @@ public class CP {
           // Se agregan sus respectivos samples a F
           for (NodeCP tree : hTrees) {
             f.add(tree.getSample());
+            int index2 = f.indexOf(tree.getSample());
+            samples.put(index2, new ArrayList<Pair>());
             t.add(tree);
           }
-
-          //Hacemos cp sobre el conjunto de samples, obteniendo tSup
-          tSup = cp(f);
-
-          //Para cada subárbol de altura h buscamos la hoja que corresponda a su sample
-          //en el árbol tSup y lo agregamos como hijo, esto viene dado por la función getChildBySample
-          for (NodeCP htree : hTrees) {
-            tSup.getChildBySample(htree);
-          }
-
-          //Seteamos los radios cobertores
-          tSup.initializeR();
         }
       }
+      //Hacemos cp sobre el conjunto de samples, obteniendo tSup
+      tSup = cp(f);
+
+      if (tSup.getEntries().size() == 0) {
+        for (NodeCP tprima : t) {
+          TupleCP tPrimaTuple = new TupleCP();
+          tPrimaTuple.setSample(tprima.getSample());
+          tPrimaTuple.setA(tprima);
+          tSup.addChild(tPrimaTuple);
+        }
+      } else {
+        //Para cada subárbol de altura h buscamos la hoja que corresponda a su sample
+        //en el árbol tSup y lo agregamos como hijo, esto viene dado por la función getChildBySample
+        for (NodeCP tprima : t) {
+          tSup.getChildBySample(tprima);
+        }
+      }
+
+      //Seteamos los radios cobertores
+      tSup.initializeR();
       return tSup;
     }
   }
 }
+
 

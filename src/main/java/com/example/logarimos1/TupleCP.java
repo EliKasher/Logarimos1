@@ -57,7 +57,7 @@ public class TupleCP {
    * @param nodeCP Un nodo.
    */
   public void setA(NodeCP nodeCP) {
-    this.a = a;
+    this.a = nodeCP;
   }
 
   /**
