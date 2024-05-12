@@ -115,7 +115,7 @@ public class Main {
    * @param potencia
    * @return un array list de tamaño 2^potencia para testear
    */
-  public static ArrayList<Pair> readInputBySize(int potencia){
+  public static ArrayList<Pair> readInputBySize(int potencia) {
     int readUntil = (int) Math.pow(2,potencia);
     ArrayList<Pair> pairs = new ArrayList<Pair>();
     reader.read("inputs/points.txt", pairs, readUntil);
@@ -162,11 +162,11 @@ public class Main {
     */
 
     //Generamos el árbol CP
-    ArrayList<Pair> input10 = readInputBySize(10);
-    NodeCP a1 = createTreeCP(input10);
+    ArrayList<Pair> input21 = readInputBySize(21);
+    NodeCP a1 = createTreeCP(input21);
 
     System.out.println("Inicio Querys");
-    double dsA1 = hundredQueries(a1, "results/resultsCP1.txt");
-    System.out.println("Query Arbol 1 lista");
+    double dsA21 = hundredQueries(a1, "results/resultsCP21.txt");
+    System.out.println("Query Arbol 21 lista");
   }
 }

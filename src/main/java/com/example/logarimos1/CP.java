@@ -238,7 +238,6 @@ public class CP {
       // Buscamos la altura mínima entre los subárboles
       int h = Integer.MAX_VALUE;
 
-      int contador = 0;
       for (int i = 0; i < trees.size(); i++) {
           int tempH = trees.get(i).getH();
           if (tempH < h) {
@@ -252,24 +251,28 @@ public class CP {
       ArrayList<NodeCP> treesCopy = new ArrayList<>(trees);
       int treesSize = trees.size();
 
+      Iterator<NodeCP> it = trees.iterator();
+
       // Los subarboles en trees contienen solo una entry
       // Se eligen los que sirven y se añaden a t
-      for (int i = 0; i < treesSize; i++) {
-        NodeCP ti = treesCopy.get(i);
+      while (it.hasNext()) {
+        NodeCP ti = it.next();
+
         if (ti.getH() == h) {
           t.add(ti);
         } else {
+          int i = trees.indexOf(ti);
+
+          it.remove();
+
           //Se saca el sample del conjunto
-          f.remove(i);
+          f.remove(ti.getSample());
 
           if (!(i == samples.size() - 1)) {
             samples = updateHash(samples, i);
           } else {
             samples.remove(i);
           }
-
-          trees.remove(i);
-
           // Se buscan los subarboles de altura h
           ArrayList<NodeCP> hTrees = getHtree(h, ti);
           // Se agregan sus respectivos samples a F
