@@ -168,9 +168,9 @@ public class Main {
       String filenameCP = "results/resultsCP" + input;
 
       //Realizamos las búsquedas
-      System.out.println("Inicio Querys");
+      System.out.println("Inicio búsquedas");
       double dsTreeSS = hundredQueries(treeSS, filenameSS);
       double dsTreeCP = hundredQueries(treeCP, filenameCP);
-      System.out.println("Queries listas");
+      System.out.println("Búsquedas listas");
   }
 }
