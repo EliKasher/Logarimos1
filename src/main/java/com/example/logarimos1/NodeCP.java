@@ -49,8 +49,12 @@ public class NodeCP extends Node {
     sample = newSample;
   }
 
+  /**
+   * Agrega una tupla a este nodo y actualiza la altura si
+   * esta tupla posee algún nodo hijo
+   * @param newChild la tupla a agregar
+   */
   public void addChild(TupleCP newChild) {
-    //si un nodo vale 1
     int hActual = this.getH() - 1;
     NodeCP nodo = newChild.getA();
     if (nodo != null) {
@@ -65,7 +69,7 @@ public class NodeCP extends Node {
   }
 
   /**
-   * Inserta una lista de puntos al nodo.
+   * Inserta una lista de puntos al nodo en forma de tuplas.
    * @param cIn Lista de puntos (Pares).
    */
   public void insert(ArrayList<Pair> cIn) {
@@ -83,20 +87,23 @@ public class NodeCP extends Node {
    */
   public Pair medoide(ArrayList<Pair> cIn) {
     Pair g = new Pair(0,0);
+
     // Sólo hay 1 candidato a medoide
     if (cIn.size() == 1) {
       g = cIn.get(0);
       return g;
+
     } else {
-      //Guardamos las distancias máximas de cada punto al considerarlo medoide
+
+      // Guardamos las distancias máximas de cada punto al considerarlo medoide
       double radio = Double.MAX_VALUE;
-      //Guardamos el mejor candidato a medoide
+      // Guardamos el mejor candidato a medoide
       Pair m = new Pair(0, 0);
 
-      //Iteramos sobre todo par de elementos en el medioide
+      // Iteramos sobre todo par de elementos en el conjunto
       for (Pair p : cIn) {
 
-        //Guardamos, para el punto p, la distancia máxima a cualquier otro punto
+        // Guardamos, para el punto p, la distancia máxima a cualquier otro punto
         double maxDist = 0;
 
         //Vamos a iterar nuevamente, considerando al punto p como 'centro' y calculando el radio según p
@@ -106,7 +113,7 @@ public class NodeCP extends Node {
           }
         }
 
-        //Si la distancia máxima es menor que el radio que se tenía anteriormente
+        // Si la distancia máxima es menor que el radio que se tenía anteriormente
         if (maxDist < radio) {
           radio = maxDist;
           m = p;
@@ -142,6 +149,7 @@ public class NodeCP extends Node {
 
     // Caso donde NodeCP(c = ArrayList<TupleCP> (sample,r = 0,a = null))
     ArrayList<TupleCP> treeEntries = this.getEntries();
+
     // Si el nodo es una hoja (nodo externo)
     if (treeEntries == null) {
       Pair p = this.getSample();

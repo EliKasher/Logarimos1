@@ -10,7 +10,6 @@ import java.lang.Math;
  * Clase que conforma el método Ciaccia-Patella.
  */
 public class CP {
-  //Hay que definir bien estos valores
   double B = 2;
   double b = 0.5*B;
 
@@ -49,10 +48,10 @@ public class CP {
    * @param hash el hash que guarda la información de cada sample y el conjunto de puntos asociado
    */
   public HashMap<Integer, ArrayList<Pair>> asignSample(Pair p, ArrayList<Pair> f, HashMap<Integer, ArrayList<Pair>> hash) {
-    //Se consigue el sample más cercano al punto p
+    // Se consigue el sample más cercano al punto p
     int index = nearestSample(p, f);
 
-    //Se obtiene la lista de puntos de ese sample y se actualiza después de agregar el punto p
+    // Se obtiene la lista de puntos de ese sample y se actualiza después de agregar el punto p
     ArrayList<Pair> points = new ArrayList<>(hash.get(index));
     points.add(p);
     hash.put(index, points);
@@ -87,7 +86,7 @@ public ArrayList<NodeCP> getHtree(int h, NodeCP t) {
    * la llave index, restándole 1 al valor a las llaves.
    * @param hash Un hashmap con llaves a los conjuntos de pares de un sample.
    * @param index El index removido desde donde se removió un elemento.
-   * @return
+   * @return el hash actualizado
    */
   public HashMap<Integer, ArrayList<Pair>> updateHash(HashMap<Integer, ArrayList<Pair>> hash, int index) {
     //desde el index en adelante en el hash se deben actualizar los índices
@@ -113,14 +112,17 @@ public ArrayList<NodeCP> getHtree(int h, NodeCP t) {
    * @return El M-Tree construido
    */
   public NodeCP cp(ArrayList<Pair> cIn) {
-    //Se revisa si los puntos de cIn se pueden contener en un bloque o no, en caso de hacerlo retornamos
+    // Se revisa si los puntos de cIn se pueden contener en un bloque o no,
+    // en caso de hacerlo retornamos
+
     if (cIn.size() <= B) {
-      //Crea un nodoCP e inserta los puntos como tuplas
+      // Crea un nodoCP e inserta los puntos como tuplas
       NodeCP a = new NodeCP();
       a.insert(cIn);
       return a;
+
     } else {
-      //Definimos una variable random
+      // Definimos un objeto random
       Random random = new Random();
       random.nextInt();
 
@@ -130,52 +132,57 @@ public ArrayList<NodeCP> getHtree(int h, NodeCP t) {
       ArrayList<Pair> f = new ArrayList<>();
 
       // F contiene los samples
-      // samples contiene el key: indice y value: sus puntos asociados
+      // El hash samples contiene el key: indice del sample y value: sus puntos asociados
       HashMap<Integer, ArrayList<Pair>> samples = new HashMap<Integer, ArrayList<Pair>>();
 
-      //Hacemos do-while en caso de tener que repetir la selección de samples.
+      // Hacemos do-while en caso de tener que repetir la selección de samples.
       do {
         f = new ArrayList<Pair>();
         samples = new HashMap<Integer, ArrayList<Pair>>();
 
-        //k corresponde a la cantidad de puntos aleatorios a escoger para conformar la lista de samples
+        // k corresponde a la cantidad de puntos aleatorios a escoger para conformar la lista de samples
         int k = (int) Math.min(B, Math.ceil(n / B));
         ArrayList<Integer> outIndex = new ArrayList<>();
 
-        //Se hace la selección de los índices de puntos que serán asigandos como samples
-        //en un ciclo hasta haber escogido los k valores necesarios
+        // Se hace la selección de los índices de puntos que serán asigandos como samples
+        // en un ciclo hasta haber escogido los k valores necesarios
         while (outIndex.size() < k) {
           int j = random.nextInt(n);
           Pair pt = cIn.get(j);
 
-          //Se revisa que los puntos a insertar no sean repetidos
+          // Se revisa que los puntos a insertar no sean repetidos
           if (!outIndex.contains(pt) && !f.contains(pt)) {
             outIndex.add(j);
             f.add(pt);
 
             int index = f.indexOf(pt);
             ArrayList<Pair> values = new ArrayList<>();
-            // Se añade sólo 1 punto por indice elegido
+
+            // Se añade sólo 1 punto por indice elegido, y se añade el mismo
+            // sample a sus puntos asociados
             values.add(pt);
             samples.put(index, values);
           }
         }
 
-        //Asignamos un sample a cada punto de cIn
+        // Asignamos un sample a cada punto de cIn
         for (int i = 0; i < n; i++) {
+
           // hay k elementos en f y k en samples
           samples = asignSample(cIn.get(i), f, samples);
         }
 
+        // Creamos un iterador para recorrer el conjunto f de samples
         Iterator<Pair> iterator = f.iterator();
 
-        //Revisamos si hay algun sample de tamaño menor a b
+        // Revisamos si hay algun sample de tamaño menor a b
         while (iterator.hasNext()) {
           Pair currentPoint = iterator.next();
           int i = f.indexOf(currentPoint);
           ArrayList<Pair> points = new ArrayList<>(samples.get(i));
 
-          //En caso de cumplir la condicion, el sample se vuelve un punto corriente y se reasigna junto con sus hijos.
+          // En caso de cumplir la condicion, el sample se vuelve un punto corriente
+          // y se reasigna junto con sus hijos.
           if (points.size() < b) {
             iterator.remove();
 
@@ -185,8 +192,8 @@ public ArrayList<NodeCP> getHtree(int h, NodeCP t) {
               samples.remove(i);
             }
 
-            //Este sample pasa a ser un punto 'normal' por lo que lo agregamos a la lista de puntos por reasignar
-            //después de eliminarlo de la lista de samples
+            // Este sample pasa a ser un punto 'normal' por lo que lo agregamos a la lista
+            // de puntos por reasignar después de eliminarlo de la lista de samples
             points.add(currentPoint);
 
             // Cada punto del sample eliminado es reasignado al siguiente más cercano
@@ -195,14 +202,16 @@ public ArrayList<NodeCP> getHtree(int h, NodeCP t) {
             }
           }
         }
-        //En caso de que el tamaño de F sea 1, repetimos el ciclo
+
+        // En caso de que el tamaño de F sea 1, repetimos el ciclo
       } while (f.size() == 1);
 
-      //Creamos una lista para ir almacenando los árboles entregados por cp
+      // Creamos una lista para ir almacenando los árboles entregados por cp
       ArrayList<NodeCP> trees = new ArrayList<NodeCP>();
 
       Iterator<Pair> iterator = f.iterator();
 
+      // Mientras hayan elementos en f, seguimos el ciclo
       while (iterator.hasNext()) {
         Pair currentPoint = iterator.next();
         int i = f.indexOf(currentPoint);
@@ -220,16 +229,17 @@ public ArrayList<NodeCP> getHtree(int h, NodeCP t) {
             samples.remove(i);
           }
 
+          // Se iteran sobre los subárboles
           ArrayList<TupleCP> childs = a.getEntries();
           for (int j = 0; j < childs.size(); j++) {
 
             TupleCP child = childs.get(j); // Pasa de ser tupla a nodo
-
             trees.add(child.getA()); // se añaden los subarboles como arboles a T (trees)
           }
+
         } else {
           //Si no, se agrega el árbol directamente
-          trees.add(a); // se añaden los subarboles como arboles a T (trees)
+          trees.add(a);
         }
       }
 
@@ -264,7 +274,7 @@ public ArrayList<NodeCP> getHtree(int h, NodeCP t) {
 
           it.remove();
 
-          //Se saca el sample del conjunto
+          // Se saca el sample del conjunto
           f.remove(ti.getSample());
 
           if (!(i == samples.size() - 1)) {
@@ -272,8 +282,10 @@ public ArrayList<NodeCP> getHtree(int h, NodeCP t) {
           } else {
             samples.remove(i);
           }
+
           // Se buscan los subarboles de altura h
           ArrayList<NodeCP> hTrees = getHtree(h, ti);
+
           // Se agregan sus respectivos samples a F
           for (NodeCP tree : hTrees) {
             f.add(tree.getSample());
@@ -292,13 +304,14 @@ public ArrayList<NodeCP> getHtree(int h, NodeCP t) {
         tPrimaTuple.setA(tprima);
         tSup.addChild(tPrimaTuple);
       }
-      //Para cada subárbol de altura h buscamos la hoja que corresponda a su sample
-      //en el árbol tSup y lo agregamos como hijo, esto viene dado por la función getChildBySample
+
+      // Para cada subárbol de altura h buscamos la hoja que corresponda a su sample
+      // en el árbol tSup y lo agregamos como hijo, esto viene dado por la función getChildBySample
       for (NodeCP tprima : t) {
         tSup.getChildBySample(tprima);
       }
 
-      //Seteamos los radios cobertores
+      // Seteamos los radios cobertores
       tSup.initializeR();
       return tSup;
     }
