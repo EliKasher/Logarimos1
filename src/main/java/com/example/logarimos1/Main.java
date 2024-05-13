@@ -150,6 +150,13 @@ public class Main {
       // el árbol. Se puede repetir esta sección las veces que sean necesarias para
       // testear los árboles necesarios
 
+      // Para testear considerando solo uno de los árboles se deben comentar las lineas donde
+      // se llama a la función createTree..(input) y hundredQueries(tree.., filename)
+      // del algoritmo que no se quiere invocar. Por ejemplo, si se quiere testear solo
+      // SS se deben comentar las siguientes líneas:
+      // NodeCP treeCP = createTreeCP(input);
+      // double dsTreeCP = hundredQueries(treeCP, filenameCP);
+
       //-----TESTEO PARA INPUT DE TAMAÑO 2^potencia-----
       int potencia = 10;
 
