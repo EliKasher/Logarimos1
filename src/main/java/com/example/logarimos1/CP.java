@@ -67,21 +67,20 @@ public class CP {
  * @param t árbol que se quiere analizar
  * @return El conjunto de subárboles con altura h
  * */
-  public ArrayList<NodeCP> getHtree(int h, NodeCP t) {
-    ArrayList<NodeCP> result = new ArrayList<>();
-
+public ArrayList<NodeCP> getHtree(int h, NodeCP t) {
+  ArrayList<NodeCP> result = new ArrayList<>();
+  if(t != null) { // Verificar que t no sea null
     if(t.getH() == h) {
-      //Agregamos el ábol de altura h a la lista a retornar
       result.add(t);
     } else {
-      //Si no tiene altura h, se busca recursivamente en sus hijos
       ArrayList<TupleCP> childsTuples = t.getEntries();
       for (TupleCP child : childsTuples) {
         result.addAll(getHtree(h, child.getA()));
       }
     }
-    return result;
   }
+  return result;
+}
 
   /**
    * Cada vez que se remueven elementos del hash, hay que actualizar las llaves desde
@@ -287,19 +286,16 @@ public class CP {
       //Hacemos cp sobre el conjunto de samples, obteniendo tSup
       tSup = cp(f);
 
-      if (tSup.getEntries().size() == 0) {
-        for (NodeCP tprima : t) {
-          TupleCP tPrimaTuple = new TupleCP();
-          tPrimaTuple.setSample(tprima.getSample());
-          tPrimaTuple.setA(tprima);
-          tSup.addChild(tPrimaTuple);
-        }
-      } else {
-        //Para cada subárbol de altura h buscamos la hoja que corresponda a su sample
-        //en el árbol tSup y lo agregamos como hijo, esto viene dado por la función getChildBySample
-        for (NodeCP tprima : t) {
-          tSup.getChildBySample(tprima);
-        }
+      for (NodeCP tprima : t) {
+        TupleCP tPrimaTuple = new TupleCP();
+        tPrimaTuple.setSample(tprima.getSample());
+        tPrimaTuple.setA(tprima);
+        tSup.addChild(tPrimaTuple);
+      }
+      //Para cada subárbol de altura h buscamos la hoja que corresponda a su sample
+      //en el árbol tSup y lo agregamos como hijo, esto viene dado por la función getChildBySample
+      for (NodeCP tprima : t) {
+        tSup.getChildBySample(tprima);
       }
 
       //Seteamos los radios cobertores

@@ -186,22 +186,18 @@ public class NodeCP extends Node {
    * @return El arbol donde se encuentra el sample.
    */
   public void getChildBySample(NodeCP subTree) {
-    //Sacamos el punto representante del subTree, un sample que debe pertenecer a éste nodo
     Pair subTreeSample = subTree.getSample();
 
-    //Buscamos el subTreeSample en las tuplas de este nodo
     for (TupleCP entry : this.getEntries()) {
       NodeCP child = entry.getA();
       if (child == null) {
         if(entry.getSample().equals(subTreeSample)) {
-          //Si la tuplaosee el sample buscado, se le agrega el nodo entregado como hijo
           entry.setA(subTree);
           int h = subTree.getH();
           this.setH(h+this.getH());
+          return; // Si encontramos el sample, terminamos la ejecución del método
         }
-        //Si no es la tupla buscada simplemente no se hace nada
-      } else {
-        //Si la tupla tiene un nodo asociado, se busca recursivamente en ese nodo
+      } else if (child != subTree) { // Solo continuamos con la recursión si el nodo actual no es igual al subárbol que estamos buscando
         child.getChildBySample(subTree);
       }
     }

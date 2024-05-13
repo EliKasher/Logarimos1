@@ -162,11 +162,12 @@ public class Main {
     */
 
     //Generamos el árbol CP
-    ArrayList<Pair> input21 = readInputBySize(21);
+    System.out.println("Creacion Arbol");
+    ArrayList<Pair> input21 = readInputBySize(18);
     NodeCP a1 = createTreeCP(input21);
 
     System.out.println("Inicio Querys");
-    double dsA21 = hundredQueries(a1, "results/resultsCP21.txt");
+    double dsA21 = hundredQueries(a1, "results/resultsCP18.txt");
     System.out.println("Query Arbol 21 lista");
   }
 }
