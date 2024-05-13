@@ -1,0 +1,25 @@
+# Tarea 1 : M-Tree
+
+Este proyecto contiene los archivos necesarios para poder realizar búsquedas en M-Trees construídos por los algoritmos Ciaccia-Patella (CP) y Sexton-Swinbank (SS).
+
+## Requisitos
+
+- Java Development Kit (JDK) instalado en el ordenador.
+
+## Instrucciones
+
+1. Clonar el repositorio o descargar el código fuente.
+
+2. Descargar los conjuntos de experimentación, descomprimirlos y colocarlos en la carpeta inputs. Link: https://drive.google.com/file/d/1HrlcQrQAuXn7sUqZx0-NW-3eJJT3hadr/view
+
+3. Abrir una terminal en la carpeta del proyecto.
+
+4. Ir a la carpeta src\main\java\com\example\logarimos1.
+
+5. Abrir el archivo Main.java, configurar qué tamaño de input se quiere utilizar y dónde se quieren guardar los resultados (Más información dentro de la documentación del archivo).
+
+6. Ejecutar el archivo Main.java (Recomendación: Ejecutar el programa en el IDE IntelliJ)
+
+7. Al ejecutar el archivo, se construirán los respectivos árboles con el tamaño de input seleccionado y automáticamente se realizarán 100 búsquedas en cada uno, las cuales vienen predefinidas por el archivo querys/querys.txt.
+
+8. Los resultados quedarán almacenados en la carpeta results. (Ejemplo: results/resultsCP10.txt , para búsquedas en un árbol generado por CP con un input de tamaño 2^10 y para SS en results/resultsSS10.txt)
