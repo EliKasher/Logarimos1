@@ -23,3 +23,9 @@ Este proyecto contiene los archivos necesarios para poder realizar búsquedas en
 7. Al ejecutar el archivo, se construirán los respectivos árboles con el tamaño de input seleccionado y automáticamente se realizarán 100 búsquedas en cada uno, las cuales vienen predefinidas por el archivo querys/querys.txt.
 
 8. Los resultados quedarán almacenados en la carpeta results. (Ejemplo: results/resultsCP10.txt , para búsquedas en un árbol generado por CP con un input de tamaño 2^10 y para SS en results/resultsSS10.txt)
+
+#Autores
+
+- Evelyn Ávila
+- Benjamín Reyes
+- Zamaya Toledo
