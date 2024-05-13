@@ -171,8 +171,8 @@ public class Main {
       System.out.println("Árboles creados correctamente");
 
       //Creamos los nombres de los archivos
-      String filenameSS = "results/resultsSS" + input;
-      String filenameCP = "results/resultsCP" + input;
+      String filenameSS = "results/resultsSS" + Integer.toString(potencia) + ".txt";
+      String filenameCP = "results/resultsCP" + Integer.toString(potencia) + ".txt";
 
       //Realizamos las búsquedas
       System.out.println("Inicio búsquedas");
