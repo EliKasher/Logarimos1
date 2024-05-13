@@ -54,7 +54,7 @@ public class SS {
       }
 
       Cluster c1c2 = c1.join(c2);
-      c.remove(c1);  // Hay que probar si esta linea funciona adecuadamente :0
+      c.remove(c1); 
 
       if (c1c2.getElements().size() <= B) {
         c.remove(c2);
